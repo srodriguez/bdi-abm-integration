@@ -22,6 +22,7 @@ package io.github.agentsoz.conservation.jill.agents;
  * #L%
  */
 
+import io.github.agentsoz.abmjill.JillModel;
 import io.github.agentsoz.bdiabm.data.ActionContent;
 import io.github.agentsoz.conservation.AuctionResultSet;
 import io.github.agentsoz.conservation.ConservationUtils;
@@ -45,7 +46,8 @@ import com.google.gson.Gson;
  * 
  * @author Sewwandi Perera
  */
-@AgentInfo(hasGoals = { "io.github.agentsoz.conservation.jill.goals.CallForBidsGoal",
+@AgentInfo(hasGoals = {
+		"io.github.agentsoz.conservation.jill.goals.CallForBidsGoal",
 		"io.github.agentsoz.conservation.jill.goals.DecideParticipationGoal",
 		"io.github.agentsoz.conservation.jill.goals.DecideBidsGoal",
 		"io.github.agentsoz.abmjill.genact.EnvironmentAction",
@@ -53,7 +55,8 @@ import com.google.gson.Gson;
 		"io.github.agentsoz.conservation.jill.goals.UpdateConservationEthicGoal",
 		"io.github.agentsoz.conservation.jill.goals.UpdateProfitMotivationGoal",
 		"io.github.agentsoz.conservation.jill.goals.SocialNormUpdateGoal" })
-public class Landholder extends Agent implements io.github.agentsoz.bdiabm.Agent {
+public class Landholder extends Agent implements
+		io.github.agentsoz.bdiabm.Agent {
 
 	/**
 	 * Profit motive barometer of the land holder
@@ -410,6 +413,8 @@ public class Landholder extends Agent implements io.github.agentsoz.bdiabm.Agent
 	 */
 	@Override
 	public void packageAction(String actionID, Object[] parameters) {
+		JillModel.packageAgentAction(Integer.toString(getId()), actionID,
+				parameters);
 	}
 
 	/**

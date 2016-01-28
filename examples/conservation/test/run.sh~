@@ -27,7 +27,7 @@ if [ "$GAMS_DIR" == "" ]; then
 	exit
 fi
 
-NUMAGENTS=100
+NUMAGENTS=10
 CFG='"{
 programOutputFile : \"conservation.landholder.out\",
 logFile : \"conservation.log\",
@@ -44,7 +44,7 @@ agents:
 
 #CMD="java -cp ${CP} io.github.agentsoz.conservation.Main -gams_dir ${GAMS_DIR} -gams_model ${GAMS_MODEL} -r 1 -c 10 -p 26 -a ${NUMAGENTS} -log_level DEBUG --agent-class agentsoz.conservation.jill.agents.Landholder --num-agents 100 --outfile conservation.landholder.out --logfile conservation.log --debug-level DEBUG"
 
-CMD="java -cp ${CP} io.github.agentsoz.conservation.Main -gams_dir ${GAMS_DIR} -gams_model ${GAMS_MODEL} -r 1 -c 10 -p 26 -a ${NUMAGENTS} -log_level DEBUG --config $CFG"
+CMD="java -cp ${CP} io.github.agentsoz.conservation.Main -gams_dir ${GAMS_DIR} -gams_model ${GAMS_MODEL} -r 1 -c 2 -p 4 -a ${NUMAGENTS} -log_level DEBUG --config $CFG"
 
 echo "Started at " `date`
 echo $CMD; eval $CMD

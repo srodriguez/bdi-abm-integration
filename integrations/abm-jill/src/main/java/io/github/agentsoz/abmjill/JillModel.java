@@ -22,6 +22,7 @@ package io.github.agentsoz.abmjill;
  * #L%
  */
 
+import io.github.agentsoz.abmjill.genact.EnvironmentActionPlan;
 import io.github.agentsoz.bdiabm.ABMServerInterface;
 import io.github.agentsoz.bdiabm.Agent;
 import io.github.agentsoz.bdiabm.BDIServerInterface;
@@ -58,7 +59,7 @@ public abstract class JillModel implements BDIServerInterface {
 	PrintStream writer = null;
 	private static AgentDataContainer nextContainer;
 	private Config config;
-	
+
 	public JillModel() {
 	}
 
@@ -82,17 +83,16 @@ public abstract class JillModel implements BDIServerInterface {
 
 	@Override
 	public boolean init(AgentDataContainer agentDataContainer,
-			AgentStateList agentList, 
-			ABMServerInterface abmServer,
+			AgentStateList agentList, ABMServerInterface abmServer,
 			Object[] params) {
 		// Parse the command line options
-		ArgumentsLoader.parse((String[])params);
-		// Load the configuration 
+		ArgumentsLoader.parse((String[]) params);
+		// Load the configuration
 		config = ArgumentsLoader.getConfig();
 		// Now initialise Jill with the loaded configuration
 		try {
 			Main.init(config);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			Log.error("While initialising JillModel: " + e.getMessage());
 			return false;
 		}
@@ -109,7 +109,20 @@ public abstract class JillModel implements BDIServerInterface {
 		Main.finish();
 	}
 
-	// package new agent action into the agent data container
+	/**
+	 * This static method contains the default process of packaging a new agent
+	 * action into the agent data container.
+	 * 
+	 * When jill agents publish actions, the {@link EnvironmentActionPlan} is
+	 * getting called and t calls the {@link io.github.agentsoz.bdiabm.Agent}'s
+	 * packageAction method. So, when implementing the packageAction method in
+	 * each agent class, this method can be called if the agent want to have the
+	 * default behaiour.
+	 * 
+	 * @param agentID
+	 * @param actionID
+	 * @param parameters
+	 */
 	public static void packageAgentAction(String agentID, String actionID,
 			Object[] parameters) {
 
@@ -217,7 +230,8 @@ public abstract class JillModel implements BDIServerInterface {
 					State state = State.valueOf(ac.get(actionID).getState()
 							.toString());
 					Object[] params = ac.get(actionID).getParameters();
-					ActionContent content = new ActionContent(params, state, actionID);
+					ActionContent content = new ActionContent(params, state,
+							actionID);
 					try {
 						int id = Integer.parseInt(entry.getKey());
 						((Agent) GlobalState.agents.get(id)).updateAction(
