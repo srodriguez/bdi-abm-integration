@@ -22,6 +22,16 @@ package io.github.agentsoz.bushfire.jill.agents;
  * #L%
  */
 
+import io.github.agentsoz.bdiabm.data.ActionContent;
+import io.github.agentsoz.bdiabm.data.ActionContent.State;
+import io.github.agentsoz.bushfire.FireModule;
+import io.github.agentsoz.bushfire.bdi.IBdiConnector;
+import io.github.agentsoz.bushfire.datamodels.ReliefCentre;
+import io.github.agentsoz.bushfire.jill.goals.EvacHouse;
+import io.github.agentsoz.jill.lang.Agent;
+import io.github.agentsoz.jill.lang.AgentInfo;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -30,31 +40,19 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-import io.github.agentsoz.abmjack.shared.ActionManager;
-import io.github.agentsoz.abmjack.shared.GlobalTime;
-import io.github.agentsoz.bdiabm.data.ActionContent;
-import io.github.agentsoz.bdiabm.data.ActionContent.State;
-import io.github.agentsoz.bushfire.bdi.IBdiConnector;
-import io.github.agentsoz.bushfire.jill.goals.EvacHouse;
-import io.github.agentsoz.jill.lang.Agent;
-import io.github.agentsoz.jill.lang.AgentInfo;
-
 /**
  * 
  * @author Sewwandi Perera
  *
  */
-@AgentInfo(hasGoals = { "agentsoz.bushfire.jill.goals.EvacMessage",
-		"agentsoz.bushfire.jill.goals.EvacHouse",
-		"agentsoz.abmjill.genact.EnvironmentAction" })
+@AgentInfo(hasGoals = { /* "io.github.agentsoz.bushfire.jill.goals.EvacHouse", */
+"io.github.agentsoz.abmjill.genact.EnvironmentAction" })
 public class BasicResident extends Agent implements
 		io.github.agentsoz.bdiabm.Agent {
 
 	final Logger logger = LoggerFactory.getLogger("");
-	public ActionManager actionManager;
 	public boolean kidsNeedPickup;
 	public boolean relsNeedPickup;
-	public String id;
 	public String homeRegion;
 	public double[] currentDestination;
 	public double[] currentStartLocation;
@@ -66,18 +64,16 @@ public class BasicResident extends Agent implements
 
 	public BasicResident(String name) {
 		super(name);
-
 	}
 
-	public void init(ActionManager am, IBdiConnector bdiConnector,
-			boolean getKids, boolean getRels) {
-		this.actionManager = am;
+	public void init(IBdiConnector bdiConnector, boolean getKids,
+			boolean getRels) {
 		this.bdiConnector = bdiConnector;
 		this.kidsNeedPickup = getKids;
 		this.relsNeedPickup = getRels;
-		logger.debug("Agent " + id + " initialised; {} ;",
-				(getKids ? "has kids; " : "no kids; ")
-						+ (getRels ? "has relatives" : "no relatives"));
+		logger.debug("Agent " + getName() + "(id:" + getId()
+				+ ") initialised; {} ;", (getKids ? "has kids; " : "no kids; ")
+				+ (getRels ? "has relatives" : "no relatives"));
 		currentDestination = new double[2];
 		Random r = new Random();
 		evacDelay = r.nextInt(1800);
@@ -86,10 +82,6 @@ public class BasicResident extends Agent implements
 	public void setDestination(double[] dest) {
 		currentStartLocation = currentDestination;
 		currentDestination = dest;
-	}
-
-	public ActionManager getActionManager() {
-		return actionManager;
 	}
 
 	public double[] getStartLocation() {
@@ -101,8 +93,8 @@ public class BasicResident extends Agent implements
 		// TODO:postEvent(updateaction_p.postEvent(actionID, state, params));
 	}
 
-	public long getCurrentTime() {
-		return GlobalTime.time.getTime();
+	public double getCurrentTime() {
+		return bdiConnector.getCurrentTime();
 	}
 
 	public void fireAlert(List<Coordinate> evacRoute, List<String> waypointNames) {
@@ -123,22 +115,40 @@ public class BasicResident extends Agent implements
 
 	@Override
 	public void handlePercept(String perceptID, Object parameters) {
+		if (bdiConnector.shouldByPassController()) {
+			ArrayList<String> params = (ArrayList<String>) parameters;
 
+			if (perceptID.equals(FireModule.FIREALERT)
+					&& params.contains(homeRegion)) {
+				List<Coordinate> waypoints = new ArrayList<Coordinate>();
+				List<String> waypointNames = new ArrayList<String>();
+
+				ReliefCentre randomRS = bdiConnector.getRandomEvacPoint();
+
+				waypointNames.add(randomRS.getLocation());
+				waypoints.add(randomRS.getLocationCoords());
+				fireAlert(waypoints, waypointNames);
+			}
+		}
 	}
 
 	@Override
 	public void packageAction(String actionID, Object[] parameters) {
-
+		bdiConnector.processAction(this, actionID, parameters);
 	}
 
 	@Override
 	public void updateAction(String actionID, ActionContent content) {
-
+		updateActionState(actionID, content.getState(), content.getParameters());
 	}
 
 	@Override
 	public void kill() {
 		super.finish();
+	}
+
+	public String getRegion() {
+		return homeRegion;
 	}
 
 }

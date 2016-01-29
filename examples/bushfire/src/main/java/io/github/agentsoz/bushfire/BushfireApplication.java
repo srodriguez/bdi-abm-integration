@@ -22,11 +22,15 @@ package io.github.agentsoz.bushfire;
  * #L%
  */
 
+import io.github.agentsoz.abmjill.JillModel;
 import io.github.agentsoz.bdiabm.ABMServerInterface;
+import io.github.agentsoz.bdiabm.Agent;
 import io.github.agentsoz.bdiabm.data.AgentDataContainer;
-import io.github.agentsoz.bdiabm.data.ActionContent.State;
+import io.github.agentsoz.bdimatsim.moduleInterface.data.SimpleMessage;
 import io.github.agentsoz.bushfire.datamodels.Region;
 import io.github.agentsoz.bushfire.datamodels.RegionSchedule;
+import io.github.agentsoz.bushfire.jill.agents.BasicResident;
+import io.github.agentsoz.bushfire.jill.agents.EvacController;
 import io.github.agentsoz.bushfire.shared.ActionID;
 import io.github.agentsoz.dataInterface.DataClient;
 import io.github.agentsoz.dataInterface.DataServer;
@@ -34,21 +38,11 @@ import io.github.agentsoz.dataInterface.DataSource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
+import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.vividsolutions.jts.geom.Coordinate;
-
-import io.github.agentsoz.abmjack.JACKModel;
-import io.github.agentsoz.abmjack.shared.ActionManager;
-import io.github.agentsoz.abmjack.shared.GlobalTime;
-import io.github.agentsoz.bdimatsim.moduleInterface.data.SimpleMessage;
-import io.github.agentsoz.bushfire.jack.agents.BasicResident;
-import io.github.agentsoz.bushfire.jack.agents.EvacController;
-import aos.jack.jak.agent.Agent;
 
 /**
  * The BushfireApplication class handles passing percepts and actions to and
@@ -56,8 +50,8 @@ import aos.jack.jak.agent.Agent;
  * etc) and agent plan choices to the visualiser, broadcasting alerts to the
  * agents, and managing the EvacController and relief schedule data.
  **/
-public class BushfireApplication extends JACKModel implements DataClient,
-		DataSource, ActionManager {
+public class BushfireApplication extends JillModel implements DataClient,
+		DataSource {
 
 	final Logger logger = LoggerFactory.getLogger("");
 	private BdiConnector bdiConnector;
@@ -74,28 +68,96 @@ public class BushfireApplication extends JACKModel implements DataClient,
 	 */
 	static boolean startedEvac = false;
 
+	/**
+	 * Input arguments sent to {@link BushfireMain}. This should be passed to
+	 * JillModel.
+	 */
+	private String[] inputArgs;
+
+	/**
+	 * Data server instance This is used to get the fire alert from
+	 * {@link FireModule}, and to pass information to visualiser.
+	 */
+	protected DataServer dataServer;
+
+	public BushfireApplication(String[] args) {
+		this.inputArgs = args;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * The init method is overridden here for three reasons. 1. to setup data
+	 * server. 2. to publishGeography to unity visualiser. 3. to assign jill
+	 * agents the names that are used by MATSim
+	 */
+	@Override
+	public boolean init(AgentDataContainer agentDataContainer,
+			io.github.agentsoz.bdiabm.data.AgentStateList agentList,
+			ABMServerInterface abmServer, Object[] params) {
+		String[] agentNames = (String[]) params;
+
+		boolean result = super.init(agentDataContainer, agentList, abmServer,
+				inputArgs);
+		if (result) {
+			this.setupDataServer();
+			this.publishGeography();
+
+			int index = 0;
+
+			for (Agent agent : getAllAgents()) {
+				if (agent instanceof BasicResident) {
+					((BasicResident) agent).setName(agentNames[index++]);
+					((BasicResident) agent).init(bdiConnector, getKids(""),
+							getRels(""));
+				}
+			}
+		} else {
+			logger.error("Failed to create Jill agents");
+			System.exit(0);
+		}
+
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void takeControl(AgentDataContainer adc) {
+		// TODO: remove this
+		logger.info("==================" + dataServer.getTime());
+
+		// Iterate through all stored DRIVE_TO actions and if their waiting time
+		// is reached package the action.
 		Object[] agentsInDriveToList = agentsDriveToActions.keySet().toArray();
 
-		for (Object agentId : agentsInDriveToList) {
-			Object[] parameters = agentsDriveToActions.get((String) agentId);
+		for (Object agentName : agentsInDriveToList) {
+			Object[] parameters = agentsDriveToActions.get((String) agentName);
 
-			if ((Integer) parameters[3] == 1) {
-				agentsDriveToActions.remove(agentId);
-				startDriving((String) agentId, parameters);
+			if ((Integer) parameters[3] == 0) {
+				agentsDriveToActions.remove(agentName);
+				packageDriveToAction((String) agentName, parameters);
 			} else {
 				parameters[3] = (Integer) parameters[3] - 1;
-				agentsDriveToActions.remove(agentId);
-				agentsDriveToActions.put((String) agentId, parameters);
+				agentsDriveToActions.remove(agentName);
+				agentsDriveToActions.put((String) agentName, parameters);
 			}
 		}
 
+		// setAgentsDepartureEvents is useful only when the byPassController is
+		// enabled.
 		this.setAgentsDepartureEvents(adc);
-		GlobalTime.increaseNewTime();
+
+		// Take control about the packaged actions in previous steps.
 		super.takeControl(adc);
 	}
 
+	/**
+	 * This method is useful only when the byPassController is enables.
+	 * 
+	 * @param adc
+	 */
 	protected void setAgentsDepartureEvents(AgentDataContainer adc) {
 		// on receiving the fire alert, insert a global percept into the data
 		// container
@@ -107,9 +169,10 @@ public class BushfireApplication extends JACKModel implements DataClient,
 		}
 	}
 
-	@Override
-	public void setup(ABMServerInterface abmServer) {
-
+	/**
+	 * Setting up the data server.
+	 */
+	private void setupDataServer() {
 		dataServer = DataServer.getServer("Bushfire");
 		dataServer.subscribe(this, DataTypes.FIRE_ALERT);
 		dataServer.subscribe(this, DataTypes.EVAC_BROADCAST);
@@ -117,11 +180,27 @@ public class BushfireApplication extends JACKModel implements DataClient,
 		dataServer.registerSource("time", this);
 
 		bdiConnector = new BdiConnector(this);
-		controller = new EvacController("controller", bdiConnector);
-		publishGeography();
+		boolean controllerFound = false;
+
+		for (Agent agent : getAllAgents()) {
+			if (agent instanceof EvacController) {
+				((EvacController) agent).setName("controller");
+				controller = (EvacController) agent;
+				controllerFound = true;
+				break;
+			}
+		}
+
+		if (!controllerFound) {
+			Log.error("Controller is not available");
+			System.exit(-1);
+		}
+
 	}
 
-	// Implemented here so we can cleanly close our log files.
+	/**
+	 * Implemented here so we can cleanly close our log files.
+	 */
 	@Override
 	public void finish() {
 		logger.info("shut down");
@@ -129,7 +208,7 @@ public class BushfireApplication extends JACKModel implements DataClient,
 		super.finish();
 	}
 
-	void promptControllerInput() {
+	public void promptControllerInput() {
 		SimpleMessage msg = new SimpleMessage();
 		msg.name = DataTypes.UI_PROMPT;
 		String prompt = "Specify input for EvacController agent?";
@@ -138,19 +217,19 @@ public class BushfireApplication extends JACKModel implements DataClient,
 		dataServer.publish(DataTypes.UI_PROMPT, msg);
 	}
 
-	@Override
-	public void packageAction(String agentID, String actionID,
+	public void processActions(BasicResident agent, String actionID,
 			Object[] parameters) {
 
-		Region region = getResidetsHomeRegion(agentID);
+		Region region = getResidetsHomeRegion(agent.getName());
 
 		// BDI agent has completed all of its goals - publish update
 		if ((String) parameters[0] == "done" && dataServer != null) {
 			SimpleMessage message = new SimpleMessage();
 			message.name = "done";
-			message.params = new Object[] { agentID, "done" };
+			message.params = new Object[] { agent.getName(), "done" };
 			dataServer.publish(DataTypes.BDI_AGENT_UPDATES, message);
-			logger.debug("agent {} made it to relief centre", agentID);
+			logger.debug("agent {}(id:{}) made it to relief centre",
+					agent.getName(), agent.getId());
 			region.agentEvacuated();
 			return;
 		}
@@ -158,46 +237,37 @@ public class BushfireApplication extends JACKModel implements DataClient,
 		// translate abstract destination names to actual network coordinates
 		// before packaging
 		if ((String) parameters[0] == ActionID.DRIVETO) {
-			if ((Integer) parameters[3] == 0) {
-				startDriving(agentID, parameters);
-			} else {
-				logger.debug("agent {} will drive to {} after {} seconds",
-						agentID, (String) parameters[2],
-						Integer.toString((int) parameters[3]));
-				agentsDriveToActions.put(agentID, parameters);
-			}
+			logger.debug("agent {}(id:{}) will drive to {} after {} seconds",
+					agent.getName(), agent.getId(), (String) parameters[2],
+					Integer.toString((int) parameters[3]));
+			agentsDriveToActions.put(agent.getName(), parameters);
 		}
 	}
 
-	protected void startDriving(String agentID, Object[] parameters) {
-		Region region = getResidetsHomeRegion(agentID);
+	protected void packageDriveToAction(String agentName, Object[] parameters) {
+		Region region = getResidetsHomeRegion(agentName);
 
 		double[] destination = (double[]) parameters[1];
 		String destinationName = (String) parameters[2];
 
-		logger.debug("agent {} driving to {}, coordinates: {}", agentID,
-				destinationName, destination);
+		logger.debug("agent (name:{}) driving to {}, coordinates: {}",
+				agentName, destinationName, destination);
 		region.agentStart();
 
-		callSuperPackageAction(agentID, ActionID.DRIVETO, parameters);
-	}
-
-	protected void callSuperPackageAction(String agentID, String action,
-			Object[] parameters) {
-		super.packageAction(agentID, action, parameters);
+		super.packageAgentAction(agentName, ActionID.DRIVETO, parameters);
 
 		if (dataServer != null) {
 			// publish new agent actions
 			SimpleMessage message = new SimpleMessage();
 			message.name = "updateAgentBDI";
-			message.params = new Object[] { agentID, parameters[0],
+			message.params = new Object[] { agentName, parameters[0],
 					parameters[1], parameters[2] };
 			dataServer.publish(DataTypes.BDI_AGENT_UPDATES, message);
 		}
 	}
 
-	protected Region getResidetsHomeRegion(String agentID) {
-		BasicResident resident = ((BasicResident) agents.get(agentID));
+	protected Region getResidetsHomeRegion(String agentName) {
+		BasicResident resident = ((BasicResident) getAgentByName(agentName));
 		return Config.getRegion(resident.homeRegion);
 	}
 
@@ -222,54 +292,18 @@ public class BushfireApplication extends JACKModel implements DataClient,
 		dataServer.publish(DataTypes.IMAGE, Config.getImage());
 	}
 
-	@Override
-	public Agent createAgent(String agentID, Object[] initData) {
-		return new BasicResident(agentID, this, bdiConnector, getKids(""),
-				getRels(""));
-	}
-
+	/**
+	 * Publish the evacuation schedules of regions to the data server.
+	 * 
+	 * @param rs
+	 */
 	public void publishSchedule(RegionSchedule rs) {
 		dataServer.publish(DataTypes.EVAC_SCHEDULE, rs);
 	}
 
-	@SuppressWarnings({"unchecked" })
-	@Override
-	public void handlePercept(Agent agent, String perceptID, Object parameters) {
-
-		if (Config.getBypassController()) {
-
-			BasicResident resident = (BasicResident) agent;
-			if (perceptID.equals(FireModule.FIREALERT)
-					&& ((ArrayList<String>) parameters)
-							.contains(resident.homeRegion)) {
-				List<Coordinate> waypoints = new ArrayList<Coordinate>();
-				List<String> waypointNames = new ArrayList<String>();
-
-				String randomShelter = Config.getRandomEvacPoint();
-
-				waypointNames.add(Config.getReliefCentre(randomShelter)
-						.getLocation());
-				double[] coords = Config.getLocation(waypointNames.get(0))
-						.getCoordinates();
-				waypoints.add(new Coordinate(coords[0], coords[1]));
-				logger.debug("agent {} received fire alert", resident.id);
-				resident.fireAlert(waypoints, waypointNames);
-			}
-
-		} else {
-			// Evac controller triggers residents byhimself. Therefore, it is
-			// not needed to trigger each residents here.
-		}
-	}
-
-	// update agent action state within the JACK program
-	@Override
-	public void updateAction(Agent agent, String actionID, State state,
-			Object[] parameters) {
-		((BasicResident) agent).updateActionState(actionID, state, parameters);
-	}
-
-	// listens for fire alerts and sets received flag to true
+	/**
+	 * Listens for fire alerts and sets received flag to true
+	 */
 	@Override
 	public boolean dataUpdate(double time, String dataType, Object data) {
 
@@ -286,10 +320,11 @@ public class BushfireApplication extends JACKModel implements DataClient,
 						Config.getRegionsByName());
 				logger.debug("number of regions to evacuate is {}",
 						regionsToEvacuate.size());
-				return true;
+			} else {
+				logger.debug("telling controller to start fire response");
+				controller.startFireResponse();
 			}
-			logger.debug("telling controller to start fire response");
-			controller.startFireResponse();
+
 			return true;
 		}
 		case DataTypes.EVAC_BROADCAST: {
@@ -303,15 +338,15 @@ public class BushfireApplication extends JACKModel implements DataClient,
 			logger.debug("received matsim agent updates");
 			for (SimpleMessage msg : (SimpleMessage[]) data) {
 
-				String id = (String) msg.params[0];
-				BasicResident agent = (BasicResident) agents.get(id);
+				String name = (String) msg.params[0];
+				BasicResident agent = (BasicResident) getAgentByName(name);
 
 				if (agent != null && agent.getStartLocation() == null) {
 
 					double lat = (double) msg.params[1];
 					double lon = (double) msg.params[2];
-					logger.debug("agent {} start location is {},{}", id, lon,
-							lat);
+					logger.debug("agent {}(id:{}) start location is {},{}",
+							name, agent.getId(), lon, lat);
 
 					agent.startLocation = new double[] { lat, lon };
 					Region r = Config.getRegion(lat, lon);
@@ -320,13 +355,15 @@ public class BushfireApplication extends JACKModel implements DataClient,
 
 						agent.homeRegion = r.getName();
 						r.agents.add(agent);
-						logger.debug("agent {} is in region {}", id,
-								agent.homeRegion);
+						logger.debug("agent {}(id:{}) is in region {}", name,
+								agent.getId(), agent.homeRegion);
 						dataServer.publish(DataTypes.REGION_ASSIGNMENT,
-								new Object[] { agent.id, agent.homeRegion });
+								new Object[] { agent.getName(),
+										agent.homeRegion });
 					} else {
-						logger.warn("Agent {} was not assigned to any region",
-								agent.id);
+						logger.warn(
+								"Agent {}(id:{}) was not assigned to any region",
+								name, agent.getId());
 					}
 				}
 			}
@@ -336,32 +373,42 @@ public class BushfireApplication extends JACKModel implements DataClient,
 		return false;
 	}
 
+	/**
+	 * Whether a particular agent should have children to pickup according to
+	 * the percentage of agents with children to pickup.
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public boolean getKids(String name) {
 		return new Random().nextDouble() < Config.getProportionWithKids();
 	}
 
+	/**
+	 * Whether a particular agent should have relations to pickup according to
+	 * the percentage of agents with relations to pickup.
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public boolean getRels(String name) {
 		return new Random().nextDouble() < Config.getProportionWithRelatives();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object getNewData(double time, Object parameters) {
-
-		// for (RegionSchedule rs : schedule.values()) {
-		//
-		// if (!rs.haveEvacuated && time > rs.getEvacTime() && startedEvac) {
-		//
-		// logger.info("Evacuating region " + rs.getRegion());
-		// rs.haveEvacuated = true;
-		// regionsToEvacuate.add(rs.getRegion());
-		// }
-		// }
 		return null;
 	}
 
-	@Override
+	/**
+	 * Returns the simulation time read from data server.
+	 * 
+	 * @return
+	 */
 	public double getSimTime() {
-
 		return dataServer.getTime();
 	}
 }

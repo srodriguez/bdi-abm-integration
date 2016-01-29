@@ -22,12 +22,10 @@ package io.github.agentsoz.bushfire.jill.plans;
  * #L%
  */
 
-import io.github.agentsoz.bushfire.jill.agents.EvacController;
-import io.github.agentsoz.bushfire.jill.goals.DecideTimeGoal;
+import io.github.agentsoz.bushfire.jill.agents.BasicResident;
 import io.github.agentsoz.jill.lang.Agent;
 import io.github.agentsoz.jill.lang.Goal;
 import io.github.agentsoz.jill.lang.Plan;
-import io.github.agentsoz.jill.lang.PlanInfo;
 import io.github.agentsoz.jill.lang.PlanStep;
 
 import java.util.ArrayList;
@@ -42,14 +40,13 @@ import org.slf4j.LoggerFactory;
  * @author Sewwandi Perera
  *
  */
-@PlanInfo(postsGoals = { "io.github.agentsoz.bushfire.jill.goals.DecideTimeGoal" })
-public class DoSchedulePlan extends Plan {
+public class EvacMessagePlan extends Plan {
 	final Logger logger = LoggerFactory.getLogger("");
-	private EvacController evacController;
+	private Agent agent;
 
-	public DoSchedulePlan(Agent agent, Goal goal, String name) {
+	public EvacMessagePlan(Agent agent, Goal goal, String name) {
 		super(agent, goal, name);
-		evacController = (EvacController) getAgent();
+		this.agent = agent;
 		body = getPlanSteps();
 	}
 
@@ -66,12 +63,13 @@ public class DoSchedulePlan extends Plan {
 	private PlanStep[] getPlanSteps() {
 		List<PlanStep> steps = new ArrayList<PlanStep>();
 
-		for (final String region : evacController.getRegions().keySet()) {
+		if (agent instanceof BasicResident) {
 			steps.add(new PlanStep() {
-
 				@Override
 				public void step() {
-					post(new DecideTimeGoal("Decide Time", region));
+					// TODO: implement this
+					logger.info("Agent {}(id:{}) recieved evac message",
+							agent.getName(), agent.getId());
 				}
 			});
 		}

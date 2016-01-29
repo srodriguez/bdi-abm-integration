@@ -94,8 +94,6 @@ public class Location {
 	 *            name of the location
 	 * @param t
 	 *            type
-	 * @param i
-	 *            id
 	 * @param east
 	 *            easting part of the coordinate
 	 * @param north

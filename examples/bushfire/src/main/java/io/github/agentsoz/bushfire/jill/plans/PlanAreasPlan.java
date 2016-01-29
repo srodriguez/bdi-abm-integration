@@ -42,10 +42,10 @@ import java.util.List;
  * @author Sewwandi Perera
  *
  */
-@PlanInfo(postsGoals = { "agentsoz.bushfire.jill.goals.DoScheduleGoal",
-		"agentsoz.bushfire.jill.goals.DecideReliefCentreGoal",
-		"agentsoz.bushfire.jill.goals.DecideRouteGoal",
-		"agentsoz.bushfire.jill.goals.CalcViableReliefCentresGoal" })
+@PlanInfo(postsGoals = { "io.github.agentsoz.bushfire.jill.goals.DoScheduleGoal",
+		"io.github.agentsoz.bushfire.jill.goals.DecideReliefCentreGoal",
+		"io.github.agentsoz.bushfire.jill.goals.DecideRouteGoal",
+		"io.github.agentsoz.bushfire.jill.goals.CalcViableReliefCentresGoal" })
 public class PlanAreasPlan extends Plan {
 
 	private EvacController evacController;

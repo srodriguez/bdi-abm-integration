@@ -45,11 +45,11 @@ import org.slf4j.LoggerFactory;
  * @author Sewwandi Perera
  *
  */
-@PlanInfo(postsGoals = { "agentsoz.bushfire.jill.goals.DecideReliefCentreGoal",
-		"agentsoz.bushfire.jill.goals.DecideRouteGoal",
-		"agentsoz.bushfire.jill.goals.CalculateFireVectorGoal",
-		"agentsoz.bushfire.jill.goals.CalculateReliefCentresGoal",
-		"agentsoz.bushfire.jill.goals.DecideTimeGoal" })
+@PlanInfo(postsGoals = { "io.github.agentsoz.bushfire.jill.goals.DecideReliefCentreGoal",
+		"io.github.agentsoz.bushfire.jill.goals.DecideRouteGoal",
+		"io.github.agentsoz.bushfire.jill.goals.CalculateFireVectorGoal",
+		"io.github.agentsoz.bushfire.jill.goals.CalculateReliefCentresGoal",
+		"io.github.agentsoz.bushfire.jill.goals.DecideTimeGoal" })
 public class ReplanRegionPlan extends Plan {
 	final Logger logger = LoggerFactory.getLogger("");
 	private EvacController evacController;

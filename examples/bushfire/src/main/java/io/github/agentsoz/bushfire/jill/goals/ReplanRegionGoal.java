@@ -30,7 +30,7 @@ import io.github.agentsoz.jill.lang.GoalInfo;
  * @author Sewwandi Perera
  *
  */
-@GoalInfo(hasPlans = { "agentsoz.bushfire.jill.plans.ReplanRegionPlan" })
+@GoalInfo(hasPlans = { "io.github.agentsoz.bushfire.jill.plans.ReplanRegionPlan" })
 public class ReplanRegionGoal extends Goal {
 	private String regionName;
 	private double executionTime;

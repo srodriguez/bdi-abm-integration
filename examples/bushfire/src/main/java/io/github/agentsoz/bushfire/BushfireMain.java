@@ -86,7 +86,7 @@ public class BushfireMain {
 		dataServer.setTimeStep(0.000277778);
 
 		// Initialise and hook up the BDI side
-		BushfireApplication bushfireApp = new BushfireApplication();
+		BushfireApplication bushfireApp = new BushfireApplication(args);
 
 		// Initialise the MATSim model
 		MATSimModel matsimManager = new MATSimModel(bushfireApp,

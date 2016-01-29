@@ -23,8 +23,12 @@
 ###
 
 DIR=`dirname "$0"`
-PROGRAM='java -cp bushfire-1.0.0.jar io.github.agentsoz.bushfire.BushfireMain'
-DEFAULT_ARGS='-c scenarios/halls_gap/halls_gap.xml -l halls-gap.log -level INFO'
+
+# logging verbosity (one of ERROR, WARN, INFO, DEBUG, TRACE)
+LOG_LEVEL=INFO
+
+PROGRAM='java -cp bushfire-1.0.1-SNAPSHOT.jar io.github.agentsoz.bushfire.BushfireMain'
+DEFAULT_ARGS="-c scenarios/warrandyte/warrandyte.xml -l warrandyte.log -level ${LOG_LEVEL}"
 
 # Print usage
 $PROGRAM -h
@@ -41,11 +45,29 @@ if [ $# -ne 0 ]; then
 fi
 printf "user args (will override defaults):\n  $UARGS\n\n"
 
-# print full command
-CMD="$PROGRAM $DEFAULT_ARGS $USER_ARGS"
-printf "running:\n  "
-printf "started on `date +"%B %d, %Y at %r"` \n  "
-printf "$CMD\n  "
-$CMD >/dev/null 2>&1
-printf "finished on `date +"%B %d, %Y at %r"` \n\n"
 
+CFG='"{
+programOutputFile : \"bushfire.out\",
+logFile : \"bushfire.jill.log\",
+logLevel : '${LOG_LEVEL}',
+agents:
+ [
+  {
+   classname : io.github.agentsoz.bushfire.jill.agents.BasicResident, 
+   args : [\"\"], 
+   count: 1
+  },
+  {
+   classname : io.github.agentsoz.bushfire.jill.agents.EvacController, 
+   args : [\"\"], 
+   count: 1
+  }
+ ]
+}"'
+
+# print full command
+CMD="$PROGRAM $DEFAULT_ARGS $USER_ARGS --config $CFG"
+
+echo "Started at " `date`
+echo $CMD; eval $CMD
+echo "Finished at" `date`

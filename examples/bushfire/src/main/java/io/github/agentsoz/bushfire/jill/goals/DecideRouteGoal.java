@@ -30,10 +30,10 @@ import io.github.agentsoz.jill.lang.GoalInfo;
  * @author Sewwandi Perera
  *
  */
-@GoalInfo(hasPlans = { "agentsoz.bushfire.jill.plans.FastRoutePlan",
-		"agentsoz.bushfire.jill.plans.SafeRoutePlan",
-		"agentsoz.bushfire.jill.plans.CustomRoutePlan",
-		"agentsoz.bushfire.jill.plans.FreeChoicePlan" })
+@GoalInfo(hasPlans = { "io.github.agentsoz.bushfire.jill.plans.FastRoutePlan",
+		"io.github.agentsoz.bushfire.jill.plans.SafeRoutePlan",
+		"io.github.agentsoz.bushfire.jill.plans.CustomRoutePlan",
+		"io.github.agentsoz.bushfire.jill.plans.FreeChoicePlan" })
 public class DecideRouteGoal extends Goal {
 
 	private String regionName;

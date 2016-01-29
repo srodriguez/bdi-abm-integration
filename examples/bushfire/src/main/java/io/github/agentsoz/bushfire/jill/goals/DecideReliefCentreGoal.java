@@ -30,10 +30,10 @@ import io.github.agentsoz.jill.lang.GoalInfo;
  * @author Sewwandi Perera
  *
  */
-@GoalInfo(hasPlans = { "agentsoz.bushfire.jill.plans.ChooseByCapacityPlan",
-		"agentsoz.bushfire.jill.plans.ChooseSafestPlan",
-		"agentsoz.bushfire.jill.plans.ChooseOnlyPlan",
-		"agentsoz.bushfire.jill.plans.NoReliefCentresPlan" })
+@GoalInfo(hasPlans = { "io.github.agentsoz.bushfire.jill.plans.ChooseByCapacityPlan",
+		"io.github.agentsoz.bushfire.jill.plans.ChooseSafestPlan",
+		"io.github.agentsoz.bushfire.jill.plans.ChooseOnlyPlan",
+		"io.github.agentsoz.bushfire.jill.plans.NoReliefCentresPlan" })
 public class DecideReliefCentreGoal extends Goal {
 
 	private String regionName;

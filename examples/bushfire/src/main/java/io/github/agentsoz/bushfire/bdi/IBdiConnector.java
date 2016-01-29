@@ -22,15 +22,15 @@ package io.github.agentsoz.bushfire.bdi;
  * #L%
  */
 
+import io.github.agentsoz.bdiabm.Agent;
 import io.github.agentsoz.bushfire.datamodels.Location;
 import io.github.agentsoz.bushfire.datamodels.Region;
 import io.github.agentsoz.bushfire.datamodels.ReliefCentre;
 import io.github.agentsoz.bushfire.datamodels.Route;
+import io.github.agentsoz.bushfire.jill.agents.BasicResident;
 
 import java.awt.Polygon;
 import java.util.HashMap;
-
-import aos.jack.jak.agent.Agent;
 
 /**
  * This interface is used to connect the BDI program with the application. BDI
@@ -79,4 +79,10 @@ public interface IBdiConnector {
 			String shelterName, double evacDelay);
 
 	public double getCurrentTime();
+
+	public void processAction(BasicResident agent, String actionID, Object[] parameters);
+
+	public boolean shouldByPassController();
+
+	public ReliefCentre getRandomEvacPoint();
 }

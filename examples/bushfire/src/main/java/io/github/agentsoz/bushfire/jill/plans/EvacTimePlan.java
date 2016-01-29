@@ -46,8 +46,8 @@ import org.slf4j.LoggerFactory;
  * @author Sewwandi Perera
  *
  */
-@PlanInfo(postsGoals = { "agentsoz.bushfire.jill.goals.CheckplanGoal",
-		"agentsoz.bushfire.jill.goals.ReplaRegionGoal" })
+@PlanInfo(postsGoals = { "io.github.agentsoz.bushfire.jill.goals.CheckplanGoal",
+		"io.github.agentsoz.bushfire.jill.goals.ReplanRegionGoal" })
 public class EvacTimePlan extends Plan {
 	final Logger logger = LoggerFactory.getLogger("");
 	private EvacController evacController;

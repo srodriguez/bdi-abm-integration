@@ -91,30 +91,31 @@ public class Config {
 
 		public Image() {
 		}
-		
+
 		@Override
 		public String toString() {
-			return "west[" + west + "] east[" + east + "] north[" + north + "] south[" + south + "]";
+			return "west[" + west + "] east[" + east + "] north[" + north
+					+ "] south[" + south + "]";
 		}
 	}
-	
-	public static HashMap<String, Location> getLocationMap(){
+
+	public static HashMap<String, Location> getLocationMap() {
 		return locations;
 	}
-	
-	public static boolean getChoicePoint(String choice){
+
+	public static boolean getChoicePoint(String choice) {
 		return choicePoints.get(choice);
 	}
 
-	public static HashMap<String, Route> getRouteMap(){
+	public static HashMap<String, Route> getRouteMap() {
 		return routes;
 	}
-	
-	public static HashMap<String, Region> getRegionMap(){
+
+	public static HashMap<String, Region> getRegionMap() {
 		return regions;
 	}
-	
-	public static HashMap<String, ReliefCentre> getReliefCentreMap(){
+
+	public static HashMap<String, ReliefCentre> getReliefCentreMap() {
 		return reliefCentres;
 	}
 
@@ -326,12 +327,15 @@ public class Config {
 					}
 					if (nodeName.equals("evac_info")) {
 
-						String shelterDistance = node.getAttributes().getNamedItem("ad_hoc_evac_dist")
+						String shelterDistance = node.getAttributes()
+								.getNamedItem("ad_hoc_evac_dist")
 								.getNodeValue();
-						setDistanceToNewShelters(Integer.parseInt(shelterDistance));
-						String safeDistance = node.getAttributes().getNamedItem("safe_distance_to_fire")
+						setDistanceToNewShelters(Integer
+								.parseInt(shelterDistance));
+						String safeDistance = node.getAttributes()
+								.getNamedItem("safe_distance_to_fire")
 								.getNodeValue();
-						setSafeDistance(Integer.parseInt(safeDistance));						
+						setSafeDistance(Integer.parseInt(safeDistance));
 					}
 					if (nodeName.equals("evac_delay")) {
 
@@ -440,8 +444,10 @@ public class Config {
 			String nodeName = node.getNodeName();
 			if (nodeName.equals("goal")) {
 				try {
-					String goal = node.getAttributes().getNamedItem("name").getNodeValue();
-					String m = node.getAttributes().getNamedItem("manual").getNodeValue();
+					String goal = node.getAttributes().getNamedItem("name")
+							.getNodeValue();
+					String m = node.getAttributes().getNamedItem("manual")
+							.getNodeValue();
 					boolean manual = Boolean.parseBoolean(m);
 					choicePoints.put(goal, manual);
 				} catch (Exception e) {
@@ -450,7 +456,7 @@ public class Config {
 				}
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -579,7 +585,7 @@ public class Config {
 						String populationStr = node.getAttributes()
 								.getNamedItem("population").getNodeValue();
 						int population = Integer.parseInt(populationStr);
-						if(((Element) node).hasAttribute("regionid")){
+						if (((Element) node).hasAttribute("regionid")) {
 							String regionId = node.getAttributes()
 									.getNamedItem("regionid").getNodeValue();
 							region.setRegionId(regionId);
@@ -651,18 +657,19 @@ public class Config {
 	private static void printRegions() {
 		for (String s : regions.keySet()) {
 			Region r = regions.get(s);
-			logger.debug("region " + r.toString() + ":" + r.getArea() + " shelters: " +r.getViableReliefCentres());
+			logger.debug("region " + r.toString() + ":" + r.getArea()
+					+ " shelters: " + r.getViableReliefCentres());
 		}
 	}
-	
-	private static void printLocations(){
+
+	private static void printLocations() {
 		for (String key : locations.keySet()) {
 			Location l = locations.get(key);
 			logger.debug("location " + l.getName() + ":" + l.getCoordinates());
 		}
 	}
-	
-	private static void printShelters(){
+
+	private static void printShelters() {
 		for (String key : reliefCentres.keySet()) {
 			ReliefCentre r = reliefCentres.get(key);
 			logger.debug("Shelter " + r.getName() + ":" + r.getCapacity());
@@ -756,22 +763,23 @@ public class Config {
 						String location = node.getAttributes()
 								.getNamedItem("location").getNodeValue();
 						Coordinate locationCoords = new Coordinate();
-						
-						if(locations.containsKey(location)){
+
+						if (locations.containsKey(location)) {
 							Location l = locations.get(location);
-							locationCoords = new Coordinate(l.getEasting(), l.getNorthing());
-						} else{
+							locationCoords = new Coordinate(l.getEasting(),
+									l.getNorthing());
+						} else {
 							logger.warn("Shelter location '" + location
 									+ "' is not in the list of known locations");
 							result = false;
 						}
-						
+
 						String capacityString = node.getAttributes()
 								.getNamedItem("capacity").getNodeValue();
 						int capacity = Integer.parseInt(capacityString);
 
-						ReliefCentre r = new ReliefCentre(name, location, locationCoords,
-								capacity);
+						ReliefCentre r = new ReliefCentre(name, location,
+								locationCoords, capacity);
 						reliefCentres.put(name, r);
 					} catch (Exception e) {
 						System.err

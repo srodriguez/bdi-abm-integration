@@ -45,8 +45,8 @@ import io.github.agentsoz.jill.lang.PlanStep;
  *
  */
 @PlanInfo(postsGoals = {
-		"agentsoz.bushfire.jill.goals.CalculateFireVectorGoal",
-		"agentsoz.bushfire.jill.goals.CalculateReliefCentresGoal" })
+		"io.github.agentsoz.bushfire.jill.goals.CalculateFireVectorGoal",
+		"io.github.agentsoz.bushfire.jill.goals.CalculateReliefCentresGoal" })
 public class CalcViableRelifCentresPlan extends Plan {
 	Logger logger = LoggerFactory.getLogger("");
 

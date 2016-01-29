@@ -22,18 +22,19 @@ package io.github.agentsoz.bushfire;
  * #L%
  */
 
+import io.github.agentsoz.bdiabm.Agent;
 import io.github.agentsoz.bushfire.bdi.IBdiConnector;
 import io.github.agentsoz.bushfire.datamodels.Location;
 import io.github.agentsoz.bushfire.datamodels.Region;
 import io.github.agentsoz.bushfire.datamodels.RegionSchedule;
 import io.github.agentsoz.bushfire.datamodels.ReliefCentre;
 import io.github.agentsoz.bushfire.datamodels.Route;
+import io.github.agentsoz.bushfire.jill.agents.BasicResident;
 
 import java.awt.Polygon;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import aos.jack.jak.agent.Agent;
 
 /**
  * This class is used by BDI programs to get information from application and
@@ -87,7 +88,12 @@ public class BdiConnector implements IBdiConnector {
 	}
 
 	public Agent[] getAllResidents() {
-		return application.getAgents();
+		Agent[] residents = new Agent[application.getAllAgents().size()];
+		int index = 0;
+		for (Agent agent : application.getAllAgents()) {
+			residents[index++] = agent;
+		}
+		return residents;
 	}
 
 	@Override
@@ -152,5 +158,21 @@ public class BdiConnector implements IBdiConnector {
 	@Override
 	public double getCurrentTime() {
 		return application.getSimTime();
+	}
+
+	@Override
+	public void processAction(BasicResident agent, String actionID, Object[] parameters) {
+		application.processActions(agent, actionID, parameters);
+
+	}
+
+	@Override
+	public boolean shouldByPassController() {
+		return Config.getBypassController();
+	}
+
+	@Override
+	public ReliefCentre getRandomEvacPoint() {
+		return Config.getReliefCentre(Config.getRandomEvacPoint());
 	}
 }

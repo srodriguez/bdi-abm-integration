@@ -48,18 +48,20 @@ import org.slf4j.LoggerFactory;
  * @author Sewwandi Perera
  *
  */
-@AgentInfo(hasGoals = { "agentsoz.bushfire.jill.goals.RespondFireGoal",
-		"agentsoz.bushfire.jill.goals.DoScheduleGoal",
-		"agentsoz.bushfire.jill.goals.CalcViableReliefCentresGoal",
-		"agentsoz.bushfire.jill.goals.CalculateFireVectorGoal",
-		"agentsoz.bushfire.jill.goals.CalculateReliefCentresGoal",
-		"agentsoz.bushfire.jill.goals.DecideReliefCentreGoal",
-		"agentsoz.bushfire.jill.goals.DecideRouteGoal",
-		"agentsoz.bushfire.jill.goals.DecideTimeGoal",
-		"agentsoz.bushfire.jill.goals.EvacTimeGoal",
-		"agentsoz.bushfire.jill.goals.CheckplanGoal",
-		"agentsoz.bushfire.jill.goals.PlanAllAreasGoal",
-		"agentsoz.bushfire.jill.goals.ReplanRegionGoal" })
+@AgentInfo(hasGoals = {
+		"io.github.agentsoz.bushfire.jill.goals.RespondFireGoal",
+		"io.github.agentsoz.bushfire.jill.goals.DoScheduleGoal",
+		"io.github.agentsoz.bushfire.jill.goals.CalcViableReliefCentresGoal",
+		"io.github.agentsoz.bushfire.jill.goals.CalculateFireVectorGoal",
+		"io.github.agentsoz.bushfire.jill.goals.CalculateReliefCentresGoal",
+		"io.github.agentsoz.bushfire.jill.goals.DecideReliefCentreGoal",
+		"io.github.agentsoz.bushfire.jill.goals.DecideRouteGoal",
+		"io.github.agentsoz.bushfire.jill.goals.DecideTimeGoal",
+		"io.github.agentsoz.bushfire.jill.goals.EvacTimeGoal",
+		"io.github.agentsoz.bushfire.jill.goals.CheckplanGoal",
+		"io.github.agentsoz.bushfire.jill.goals.PlanAllAreasGoal",
+		"io.github.agentsoz.bushfire.jill.goals.EvacMessage",
+		"io.github.agentsoz.bushfire.jill.goals.ReplanRegionGoal" })
 public class EvacController extends Agent implements
 		io.github.agentsoz.bdiabm.Agent {
 	private IBdiConnector bdiConnector;

@@ -22,6 +22,7 @@ package io.github.agentsoz.bushfire.datamodels;
  * #L%
  */
 
+import io.github.agentsoz.bdiabm.Agent;
 import io.github.agentsoz.bushfire.EvacuationReport;
 import io.github.agentsoz.dataInterface.DataServer;
 
@@ -33,8 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
-
-import aos.jack.jak.agent.Agent;
 
 public class Region {
 

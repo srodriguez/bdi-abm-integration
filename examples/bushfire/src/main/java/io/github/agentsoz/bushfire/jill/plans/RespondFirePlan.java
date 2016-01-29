@@ -36,7 +36,7 @@ import java.util.HashMap;
  * @author Sewwandi Perera
  *
  */
-@PlanInfo(postsGoals = "agentsoz.bushfire.jill.goals.PlanAllAreasGoal")
+@PlanInfo(postsGoals = "io.github.agentsoz.bushfire.jill.goals.PlanAllAreasGoal")
 public class RespondFirePlan extends Plan {
 
 	public RespondFirePlan(Agent agent, Goal goal, String name) {

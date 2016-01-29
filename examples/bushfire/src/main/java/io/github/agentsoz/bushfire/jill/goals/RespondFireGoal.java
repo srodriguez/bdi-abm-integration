@@ -30,7 +30,7 @@ import io.github.agentsoz.jill.lang.GoalInfo;
  * @author Sewwandi Perera
  *
  */
-@GoalInfo(hasPlans = { "agentsoz.bushfire.jill.plans.RespondFirePlan" })
+@GoalInfo(hasPlans = { "io.github.agentsoz.bushfire.jill.plans.RespondFirePlan" })
 public class RespondFireGoal extends Goal {
 
 	public RespondFireGoal(String str) {

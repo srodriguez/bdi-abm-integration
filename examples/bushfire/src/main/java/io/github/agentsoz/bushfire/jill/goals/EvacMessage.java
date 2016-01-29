@@ -27,12 +27,14 @@ import java.util.List;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import io.github.agentsoz.jill.lang.Goal;
+import io.github.agentsoz.jill.lang.GoalInfo;
 
 /**
  * 
  * @author Sewwandi Perera
  *
  */
+@GoalInfo(hasPlans = { "io.github.agentsoz.bushfire.jill.plans.EvacMessagePlan" })
 public class EvacMessage extends Goal {
 	private List<Coordinate> route;
 	private List<String> waypointNames;

@@ -30,7 +30,7 @@ import io.github.agentsoz.jill.lang.GoalInfo;
  * @author Sewwandi Perera
  *
  */
-@GoalInfo(hasPlans = { "agentsoz.bushfire.jill.plans.CalcFireVectorPlan" })
+@GoalInfo(hasPlans = { "io.github.agentsoz.bushfire.jill.plans.CalcFireVectorPlan" })
 public class CalculateFireVectorGoal extends Goal {
 
 	public CalculateFireVectorGoal(String str) {
