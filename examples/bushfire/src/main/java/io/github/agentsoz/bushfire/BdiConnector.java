@@ -91,7 +91,9 @@ public class BdiConnector implements IBdiConnector {
 		Agent[] residents = new Agent[application.getAllAgents().size()];
 		int index = 0;
 		for (Agent agent : application.getAllAgents()) {
-			residents[index++] = agent;
+			if (agent instanceof BasicResident) {
+				residents[index++] = agent;
+			}
 		}
 		return residents;
 	}
@@ -161,7 +163,8 @@ public class BdiConnector implements IBdiConnector {
 	}
 
 	@Override
-	public void processAction(BasicResident agent, String actionID, Object[] parameters) {
+	public void processAction(BasicResident agent, String actionID,
+			Object[] parameters) {
 		application.processActions(agent, actionID, parameters);
 
 	}
