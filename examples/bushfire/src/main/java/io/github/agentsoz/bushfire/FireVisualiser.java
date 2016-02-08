@@ -140,7 +140,7 @@ public class FireVisualiser extends VisualiserModule {
 
             SimpleMessage msg = new SimpleMessage();
             msg.name          = dataType;
-            msg.agentName       = (String) ((Object[]) data)[ 0 ];
+            msg.agentID       = (String) ((Object[]) data)[ 0 ];
             msg.params        = new Object[] { (String) ((Object[]) data)[ 1 ] };
             addUpdate( msg );
             return true;
