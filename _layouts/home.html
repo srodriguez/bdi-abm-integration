@@ -1,0 +1,20 @@
+---
+layout: default
+---
+
+<div class="home">
+
+  {{ content }}
+
+  <h1 class="page-heading">Table of Contents</h1>
+  
+  <ul class="toc-list">
+    {% for post in site.html_pages %}
+      <li>
+          <a class="toc-link" href="{{ post.url | relative_url }}">{{ post.title  }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+</div>
+
