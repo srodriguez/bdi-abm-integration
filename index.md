@@ -35,7 +35,20 @@ Technical questions about the code can be directed to
 Dhirendra Singh {% include icon-github.html username="dhixsingh" %}.
 -->
 
-# Download
+<div class="rounded-btn"
+onclick="location.href='https://github.com/agentsoz/bdi-abm-integration/releases/v1.0.0';">
+<h2>Release v1.0.0 <img src="./fig-download.png" height="56"/></h2>
+</div>
 
-* [Stable release v1.0.0](https://github.com/agentsoz/bdi-abm-integration/releases/v1.0.0)
+
+<h1 class="page-heading">Table of Contents</h1>
+  
+<ul class="toc-list">
+  {% for post in site.html_pages %}
+    <li>
+      <a class="toc-link" href="{{ post.url | relative_url }}">{{ post.title  }}</a>
+    </li>
+  {% endfor %}
+</ul>
+
 

@@ -14,6 +14,20 @@
   font-size: x-large;
 }
 
+.rounded-btn {
+    border-radius: 25px;
+    background-color: #2a7ae2;
+    padding: 20px 20px 0 20px;
+    margin: 1em 0 2em 0; 
+    display: inline-block; 
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.rounded-btn:hover {
+    background-color: #1a6ad2;
+}
+
 @media screen { 
   .site-nav { position: absolute; top: 9px; right: 15px; background-color: #fdfdfd; border: 1px solid #e8e8e8; border-radius: 5px; text-align: right; }
   .site-nav .menu-icon { display: block; float: right; width: 36px; height: 26px; line-height: 0; padding-top: 10px; text-align: center; }
