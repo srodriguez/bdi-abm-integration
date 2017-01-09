@@ -12,8 +12,15 @@ layout: home
 
 The [BDI-ABM Project][] software realises a mechanism for integrating 
 Belief-Desire-Intention (BDI) reasoning in agents within an
-agent-based simulation (ABM). The concept is described
-in the following papers:
+agent-based simulation (ABM). The software framework provides the 
+infrastructure that allows off-the-shelf
+BDI and ABM systems to be combined. In this arrangement, conceptually, 
+the *body* of the agent resides in the physical environment of the ABM while
+the *brain* is programmed separately within the BDI system. 
+
+<img alt="BDI-ABM software achitecture" src="/fig-arch.png" width="849"/>
+
+The concept is described in the following papers:
 
 *  Dhirendra Singh, Lin Padgham, Brian Logan. 
    Integrating BDI agents with Agent Based Simulation Platforms.
@@ -41,7 +48,113 @@ onclick="location.href='https://github.com/agentsoz/bdi-abm-integration/releases
 </div>
 
 
-<h1 class="page-heading">Table of Contents</h1>
+
+# How to use this software
+
+The project code resides on GitHub [here][BDI-ABM Project]. 
+Examples of BDI-ABM applications are provided in the `./examples` directory.
+
+Any BDI-ABM application consists of three layers. A generic first layer
+(`./integrations/bdi-abm`) manages the high level interaction and message
+passing between the BDI and the ABM system. A second platform specific
+layer realises the connection between a specific BDI platform (such as 
+JACK, i.e., `./integrations/abm-jack`), and a specific ABM system (such 
+as MATSim, i.e., `./integrations/bdi-matsim`). Finally, a third application
+layer puts these together along with domain specific code (for instance
+`./examples/bushfire`). 
+
+Overall, the repository consists of *integrations* and *examples*. Integrations
+are platform specific and live in `./integrations`. Examples are domain 
+specific, and live in `./examples`. The following integrations
+are provided:
+ 
+Integration   | Directory                   | Description
+:-------------|:----------------------------|:----------------------------
+BDI-ABM       | `./integrations/bdi-abm`    | BDI-ABM communication and data layer
+BDI-GAMS      | `./integrations/bdi-gams`   | Integration for [GAMS](http://www.gams.com) 
+BDI-MATSim    | `./integrations/bdi-matsim` | Integration for [MATSim](http://www.matsim.org)
+BDI-Repast    | `./integrations/bdi-repast` | Integration for [Repast Simphony](http://repast.sourceforge.net) <br/>**OUTDATED SINCE REPAST 2.1**
+ABM-GORITE    | `./integrations/abm-gorite` | Integration for [GORITE](https://en.wikipedia.org/wiki/GORITE) <br/>**UNAVAILABLE DUE TO PROPRIETARY LICENSE**
+ABM-JACK      | `./integrations/abm-jack`   | Integration for [JACK](http://aosgrp.com/products/jack)
+ABM-Jadex     | `./integrations/abm-jadex`  | Integration for [Jadex](https://www.activecomponents.org/) <br/>**OUTDATED SINCE JADEX 3.0**
+              |                             |
+                            
+Integrations are pulled together to build application examples. The following
+examples are provided:
+
+Example             | Directory                  | Description
+:-------------------|:---------------------------|:----------------------------
+Bushfire Evacuation | `./examples/bushfire`      | Uses JACK and MATSim
+Conservation Ethics | `./examples/conservation`  | Uses JACK and GAMS
+Taxi Service        | `./examples/taxi`          | Uses GORITE and MATSim<br/> **UNAVAILABLE**
+Child Vaccination   | `./examples/vaccination`   | Uses JACK and a custom Python-based ABM
+Humans and Zombies  | `./examples/zombies`       | Uses Jadex and Repast<br/> **UNAVAILABLE**
+                    |                            | 
+                    
+
+
+# Build Dependencies 
+
+
+* [Java Development Kit (JDK) 1.8](http://en.wikipedia.org/wiki/Java_Development_Kit)
+
+* [Apache Maven 3.3.x+](maven.apache.org)
+
+* [Eclipse with built-in Maven support](https://www.eclipse.org) (for development only)
+
+
+* Some of the integrations (e.g., JACK, GAMS) require third-party 
+  libraries to be installed in your local Maven repository. See 
+  the respective READMEs (`./integrations/*/README.md`) for details.
+  *The project will not build unless these dependencies have been 
+   resolved.*
+
+# Compiling
+
+This software is managed by the Apache Maven software management tool. You
+can build the software in two ways. 
+
+* The entire suite of integrations and examples can be built using the 
+  command line. Ensure that you have Maven installed. 
+  Then from the top level directory
+  containing `pom.xml`, do 
+  
+  ```
+  mvn clean install
+  ```
+
+* Each integration and example also contains an Eclipse project. First 
+  ensure that you have an appropriate version that supports Maven. 
+  Then import the existing project 
+  (e.g., `./integrations/bdi-abm/.project`) into Eclipse, and it should 
+  build without any additional configuration. 
+
+
+
+# License
+
+
+BDI-ABM Integration Package
+Copyright (C) 2014, 2015 by its authors. See AUTHORS file.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+For contact information, see AUTHORS file.
+
+
+
+<h1 class="page-heading">Related Pages</h1>
   
 <ul class="toc-list">
   {% for post in site.html_pages %}
