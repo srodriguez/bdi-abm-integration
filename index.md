@@ -51,17 +51,19 @@ onclick="location.href='https://github.com/agentsoz/bdi-abm-integration/releases
 
 # How to use this software
 
-The project code resides on GitHub [here][BDI-ABM Project]. 
-Examples of BDI-ABM applications are provided in the `./examples` directory.
+The project code [resides on GitHub][BDI-ABM Project]. 
 
-Any BDI-ABM application consists of three layers. A generic first layer
+A BDI-ABM application consists of three layers. A generic first layer
 (`./integrations/bdi-abm`) manages the high level interaction and message
 passing between the BDI and the ABM system. A second platform specific
 layer realises the connection between a specific BDI platform (such as 
 JACK, i.e., `./integrations/abm-jack`), and a specific ABM system (such 
 as MATSim, i.e., `./integrations/bdi-matsim`). Finally, a third application
 layer puts these together along with domain specific code (for instance
-`./examples/bushfire`). 
+`./examples/bushfire`). The following figure shows the arrangement.
+
+
+<img alt="BDI-ABM software achitecture" src="/fig-tiers.png" width="849"/>
 
 Overall, the repository consists of *integrations* and *examples*. Integrations
 are platform specific and live in `./integrations`. Examples are domain 
@@ -73,10 +75,10 @@ Integration   | Directory                   | Description
 BDI-ABM       | `./integrations/bdi-abm`    | BDI-ABM communication and data layer
 BDI-GAMS      | `./integrations/bdi-gams`   | Integration for [GAMS](http://www.gams.com) 
 BDI-MATSim    | `./integrations/bdi-matsim` | Integration for [MATSim](http://www.matsim.org)
-BDI-Repast    | `./integrations/bdi-repast` | Integration for [Repast Simphony](http://repast.sourceforge.net) <br/>**OUTDATED SINCE REPAST 2.1**
-ABM-GORITE    | `./integrations/abm-gorite` | Integration for [GORITE](https://en.wikipedia.org/wiki/GORITE) <br/>**UNAVAILABLE DUE TO PROPRIETARY LICENSE**
+BDI-Repast    | `./integrations/bdi-repast` | Integration for [Repast Simphony](http://repast.sourceforge.net) <br/><span class="msg-warn">OUTDATED SINCE REPAST 2.1</span>
+ABM-GORITE    | `./integrations/abm-gorite` | Integration for [GORITE](https://en.wikipedia.org/wiki/GORITE) <br/><span class="msg-warn">UNAVAILABLE DUE TO PROPRIETARY LICENSE</span>
 ABM-JACK      | `./integrations/abm-jack`   | Integration for [JACK](http://aosgrp.com/products/jack)
-ABM-Jadex     | `./integrations/abm-jadex`  | Integration for [Jadex](https://www.activecomponents.org/) <br/>**OUTDATED SINCE JADEX 3.0**
+ABM-Jadex     | `./integrations/abm-jadex`  | Integration for [Jadex](https://www.activecomponents.org/) <br/><span class="msg-warn">OUTDATED SINCE JADEX 3.0</span>
               |                             |
                             
 Integrations are pulled together to build application examples. The following
@@ -86,9 +88,9 @@ Example             | Directory                  | Description
 :-------------------|:---------------------------|:----------------------------
 Bushfire Evacuation | `./examples/bushfire`      | Uses JACK and MATSim
 Conservation Ethics | `./examples/conservation`  | Uses JACK and GAMS
-Taxi Service        | `./examples/taxi`          | Uses GORITE and MATSim<br/> **UNAVAILABLE**
+Taxi Service        | `./examples/taxi`          | Uses GORITE and MATSim<br/><span class="msg-warn">UNAVAILABLE</span>
 Child Vaccination   | `./examples/vaccination`   | Uses JACK and a custom Python-based ABM
-Humans and Zombies  | `./examples/zombies`       | Uses Jadex and Repast<br/> **UNAVAILABLE**
+Humans and Zombies  | `./examples/zombies`       | Uses Jadex and Repast<br/><span class="msg-warn">UNAVAILABLE</span>
                     |                            | 
                     
 
@@ -114,17 +116,19 @@ Humans and Zombies  | `./examples/zombies`       | Uses Jadex and Repast<br/> **
 This software is managed by the Apache Maven software management tool. You
 can build the software in two ways. 
 
-* The entire suite of integrations and examples can be built using the 
-  command line. Ensure that you have Maven installed. 
-  Then from the top level directory
-  containing `pom.xml`, do 
+* Examples can all be built from the command line. 
+  Ensure that you have Maven installed. 
+  Check the corresponding README (`./examples/*/README.md`) for
+  instructions on how to build an example. Essentially this involves executing 
+  the following build command for the generic layer, BDI integration, ABM 
+  integration, and the example.
   
   ```
   mvn clean install
   ```
 
 * Each integration and example also contains an Eclipse project. First 
-  ensure that you have an appropriate version that supports Maven. 
+  ensure that you have an appropriate Eclipse version that supports Maven. 
   Then import the existing project 
   (e.g., `./integrations/bdi-abm/.project`) into Eclipse, and it should 
   build without any additional configuration. 
