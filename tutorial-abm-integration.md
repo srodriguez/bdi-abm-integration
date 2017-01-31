@@ -20,7 +20,7 @@ It is used in the conservation ethics application
 This tutorial assumes intermediate Java development knowledge. We use Eclipse
 for our Java development, but feel free to use your favourite IDE.
 
-## Step #1: Implement the ABM Interface
+## Step #1: Implement the ABM interface
 
 The first step in building a new ABM integration is to create a new Java class
 that implements the generic layer ABM Interface `io.github.agentsoz.bdiabm.ABMServerInterface`.
@@ -62,7 +62,7 @@ road only when it is preparing to drive to its destination, and not at any
 other time. In this case, the BDI agent would request this information from
 the ABM, when needed, using the `queryPercept` function.
 
-## Step #2: Integrate the ABM System calls
+## Step #2: Integrate the ABM system
 
 This is the part where we hook up the external ABM system to our new class --
 the very purpose of this exercise. Typically this would involve API calls to
@@ -98,13 +98,12 @@ public GAMSModel(String GAMSDir, String file) {
 }
 ```
 The details of code are less important here. Its purpose is mainly to initialise
-the GAMS system and get it ready to execute the code from the given `file`.
-You probably figured this much--our application will write this file at each
-simulation step.
+the GAMS system and get it ready to execute the code from the given GAMS
+code `file`.
 
 What remains is a way to *run* the configured GAMS code at each simulation
 cycle, each time passing in a new set of input values, and collecting at the
-end of the run, a new set of output values. So we write a function to do
+end of the run, a new set of output values. We write a function to do
 just that:
 
 ```java
@@ -135,9 +134,14 @@ completed GAMS integration class
 The final step is to make sure it all builds, and importantly works. You will
 likely write some unit tests, and stub classes to do that.
 
-# All done
+# Next steps
 
 Once your ABM integration is ready, and assuming you have a BDI integration you
 can use (or you have created your own using the
 [BDI integration HOWTO](howto-bdi-integration)), you can then start building
-                  your new application. See the Custom [BDI-ABM application HOWTO](./howto-)
+your new application. See the [Custom BDI-ABM application HOWTO](howto-bdi-abm-application)
+for more details on that. Finally, to see how the GAMS integration is used in
+an example application, see the
+[`AuctioneerModel`](https://github.com/agentsoz/bdi-abm-integration/blob/v1.0.0/examples/conservation/src/main/java/io/github/agentsoz/conservation/AuctioneerModel.java)
+class of the conservation ethics application.
+

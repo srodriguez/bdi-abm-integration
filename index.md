@@ -5,7 +5,7 @@
 layout: home
 ---
 
-# BDI-ABM Project Home
+# BDI-ABM project home
 
 [BDI-ABM Project]: https://github.com/agentsoz/bdi-abm-integration
 [bdi-abm-website]: http://agentsoz.github.io/bdi-abm-integration
@@ -95,7 +95,7 @@ Humans and Zombies  | `./examples/zombies`       | Uses Jadex and Repast<br/><sp
 
 
 
-# Build Dependencies
+# Build dependencies
 
 
 * [Java Development Kit (JDK) 1.8](http://en.wikipedia.org/wiki/Java_Development_Kit)
@@ -157,8 +157,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 For contact information, see AUTHORS file.
 
 
-
-<h1 class="page-heading">Related Pages</h1>
+# Related pages
 
 <ul class="toc-list">
   {% for post in site.html_pages %}
