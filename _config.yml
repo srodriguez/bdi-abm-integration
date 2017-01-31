@@ -20,7 +20,7 @@ description: > # this means to ignore newlines until "baseurl:"
   This software is maintained by the RMIT Agents Group,  
   School of Science, RMIT University, Melbourne, Australia.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://agentsoz.github.io/" # the base hostname & protocol for your site, e.g. http://example.com
+url: "/bdi-abm-integration/" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 github_username:  agentsoz
 
