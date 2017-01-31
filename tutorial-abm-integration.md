@@ -8,7 +8,7 @@ In this HOWTO we will step through the development of a custom ABM
 integration, i.e., JAVA code for a new ABM System Integration box as shown in
 the figure below.
 
-<img alt="BDI-ABM software achitecture" src="/fig-tiers.png" width="849"/>
+<img alt="BDI-ABM software architecture" src="{{ site.baseurl }}/fig-tiers.png" width="849"/>
 
 The system we will integrate is [GAMS](http://www.gams.com), a system for
 modeling linear, nonlinear and mixed integer optimization problems. The
@@ -137,7 +137,7 @@ likely write some unit tests, and stub classes to do that.
 
 # All done
 
-Once your ABM integration is ready, and assuming you have a BDI integration you 
-can use (or you have created your own using the 
+Once your ABM integration is ready, and assuming you have a BDI integration you
+can use (or you have created your own using the
 [BDI integration HOWTO](howto-bdi-integration)), you can then start building
                   your new application. See the Custom [BDI-ABM application HOWTO](./howto-)

@@ -18,7 +18,7 @@ BDI and ABM systems to be combined. In this arrangement, conceptually,
 the *body* of the agent resides in the physical environment of the ABM while
 the *brain* is programmed separately within the BDI system.
 
-<img alt="BDI-ABM software achitecture" src="/fig-arch.png" width="849"/>
+<img alt="BDI-ABM conceptual architecture" src="{{ site.baseurl }}/fig-arch.png" width="849"/>
 
 The concept is described in the following papers:
 
@@ -63,7 +63,7 @@ layer puts these together along with domain specific code (for instance
 `./examples/bushfire`). The following figure shows the arrangement.
 
 
-<img alt="BDI-ABM software achitecture" src="/fig-tiers.png" width="849"/>
+<img alt="BDI-ABM software architecture" src="{{ site.baseurl }}/fig-tiers.png" width="849"/>
 
 Overall, the repository consists of *integrations* and *examples*. Integrations
 are platform specific and live in `./integrations`. Examples are domain
