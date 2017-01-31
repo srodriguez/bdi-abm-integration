@@ -46,16 +46,17 @@ systems occurs, and is what will be called (by your application) at each
 simulation cycle. The `agentDataContainer` object is what holds the data for
 all the agents. Essentially it is a map, with agent name as key, and an
 `ActionPerceptContainer` object as value, that in turn stores the agent's
-actions (in class `ActionContainer`) and percepts ()in class `PerceptContainer`).
+actions (in class `ActionContainer`) and percepts (in class `PerceptContainer`).
 You may wish to inspect the top level
 `io.github.agentsoz.bdiabm.data.AgentDataContainer` class further to understand
 the structure details. This map is passed back and forth between the BDI and ABM
 systems, each updating it as the simulation progresses.
 
 The second function `queryPercept` is used, by the BDI system, to make ad-hoc
-queries in the ABM. This is explained in the papers, but is essentially used
-for data transfer efficiency. It is often the case that certain information
-required in the BDI system is context dependent and need not be shipped as a
+queries in the ABM. This is explained in the papers, but is essentially there
+for data transfer efficiency. It is often the case that some information
+required by a BDI agent to make a decision is context dependent,
+which need not be shipped as a
 percept on each cycle (using the `agentDataContainer`).
 For instance, an agent may require information about traffic conditions on the
 road only when it is preparing to drive to its destination, and not at any
@@ -67,11 +68,11 @@ the ABM, when needed, using the `queryPercept` function.
 This is the part where we hook up the external ABM system to our new class --
 the very purpose of this exercise. Typically this would involve API calls to
 the underlying ABM, either directly through Java if the ABM has a compatible
-API, or else through an indirect means, such as using the Java Native Interface
+API, or else indirectly, such as using the Java Native Interface
 (JNI) to communicate to a native ABM application, or using a network-based
 connection.
 
-In our case, fortunately, GAMS provides a nice Java interface (JAR) which makes
+In our example case, fortunately, GAMS provides a nice Java interface (JAR) which makes
 it a relatively straightforward exercise to control the GAMS system through our
 class.
 
@@ -139,7 +140,7 @@ likely write some unit tests, and stub classes to do that.
 Once your ABM integration is ready, and assuming you have a BDI integration you
 can use (or you have created your own using the
 [BDI integration HOWTO](howto-bdi-integration)), you can then start building
-your new application. See the [Custom BDI-ABM application HOWTO](howto-bdi-abm-application)
+your new application. See the [custom BDI-ABM application HOWTO](howto-bdi-abm-application)
 for more details on that. Finally, to see how the GAMS integration is used in
 an example application, see the
 [`AuctioneerModel`](https://github.com/agentsoz/bdi-abm-integration/blob/v1.0.0/examples/conservation/src/main/java/io/github/agentsoz/conservation/AuctioneerModel.java)
