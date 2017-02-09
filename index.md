@@ -27,6 +27,12 @@ The concept is described in the following papers:
    Autonomous Agents and Multi-agent Systems,
    Volume 30, Issue 6, pages 1050-1071, 2016. ([DOI](http://dx.doi.org/10.1007/s10458-016-9332-x))
 
+*  Lin Padgham and Dhirendra Singh. Making MATSim Agents Smarter with the
+   Belief-Desire-Intention Framework (Chapter 31).
+   Horni, A., Nagel, K. and Axhausen, K.W. (eds.). The Multi-Agent
+   Transport Simulation MATSim. Ubiquity Press, London, 2016.
+   ([DOI](http://dx.doi.org/10.5334/baw))
+
 *  Lin Padgham, Kai Nagel, Dhirendra Singh, Qingyu Chen.
    Integrating BDI Agents into a MATSim Simulation.
    Frontiers in Artificial Intelligence and Applications 263 (ECAI 2014),
