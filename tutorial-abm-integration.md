@@ -139,7 +139,7 @@ likely write some unit tests, and stub classes to do that.
 
 Once your ABM integration is ready, and assuming you have a BDI integration you
 can use (or you have created your own using the
-[BDI integration HOWTO](howto-bdi-integration), you can then start building
+[BDI integration HOWTO]({{ site.baseurl }}/howto-bdi-integration), you can then start building
 your new application. See the [custom BDI-ABM application HOWTO](howto-bdi-abm-application)
 for more details on that. Finally, to see how the GAMS integration is used in
 an example application, see the
@@ -147,4 +147,4 @@ an example application, see the
 class of the conservation ethics application.
 
 <br/><br/>
-*Last updated by Dhirendra Singh on 02 Feb 2017*
+*Last updated by Dhirendra Singh on 10 Feb 2017*
