@@ -49,8 +49,8 @@ Dhirendra Singh {% include icon-github.html username="dhixsingh" %}.
 -->
 
 <div class="rounded-btn"
-onclick="location.href='https://github.com/agentsoz/bdi-abm-integration/releases/v1.0.0';">
-<h2>Release v1.0.0 <img src="{{ site.baseurl }}/fig-download.png" height="56"/></h2>
+onclick="location.href='https://github.com/agentsoz/bdi-abm-integration/releases';">
+<h2>Download <img src="{{ site.baseurl }}/fig-download.png" height="56"/></h2>
 </div>
 
 
