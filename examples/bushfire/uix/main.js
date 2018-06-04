@@ -1,78 +1,104 @@
 import 'ol/ol.css';
-import GeoJSON from 'ol/format/GeoJSON';
-import KML from 'ol/format/KML';
-import Map from 'ol/Map';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import View from 'ol/View';
-import sync from 'ol-hashed';
-import DragAndDrop from 'ol/interaction/DragAndDrop';
-import Draw from 'ol/interaction/Draw';
-import Snap from 'ol/interaction/Snap';
-import Modify from 'ol/interaction/Modify';
-import Select from 'ol/interaction/Select';
-import TileLayer from 'ol/layer/Tile';
-import XYZSource from 'ol/source/XYZ';
-import {fromLonLat} from 'ol/proj';
+/*
+import Projection from 'ol/proj/projection';
+import View from 'ol/view';
+import Map from 'ol/map';
+import Tile from 'ol/layer/tile';
+import OSM from 'ol/source/osm';
+import GeoJSON from 'ol/format/geojson';
+import Vector from 'ol/layer/vector';
+import VectorTile from 'ol/source/vectortile';
+*/
+import geojsonvt from 'geojson-vt/geojson-vt-dev';
 
-// const source = new VectorSource({
-//   format: new GeoJSON(),
-//   url: './data/countries.json'
-// });
-const source = new VectorSource();
+import DragAndDrop from 'ol/interaction/draganddrop';
 
-const layer = new VectorLayer({
-  source: source
+var replacer = function(key, value) {
+  if (value.geometry) {
+    var type;
+    var rawType = value.type;
+    var geometry = value.geometry;
+
+    if (rawType === 1) {
+      type = 'MultiPoint';
+      if (geometry.length == 1) {
+        type = 'Point';
+        geometry = geometry[0];
+      }
+    } else if (rawType === 2) {
+      type = 'MultiLineString';
+      if (geometry.length == 1) {
+        type = 'LineString';
+        geometry = geometry[0];
+      }
+    } else if (rawType === 3) {
+      type = 'Polygon';
+      if (geometry.length > 1) {
+        type = 'MultiPolygon';
+        geometry = [geometry];
+      }
+    }
+
+    return {
+      'type': 'Feature',
+      'geometry': {
+        'type': type,
+        'coordinates': geometry
+      },
+      'properties': value.tags
+    };
+  } else {
+    return value;
+  }
+};
+
+var tilePixels = new ol.proj.Projection({
+  code: 'TILE_PIXELS',
+  units: 'tile-pixels'
 });
 
-const map = new Map({
-  target: 'map-container',
+var map = new ol.Map({
   layers: [
-    new TileLayer({
-      source: new XYZSource({
-        url: 'http://tile.stamen.com/terrain/{z}/{x}/{y}.jpg'
-      })
+    new ol.layer.Tile({
+      source: new ol.source.OSM()
     })
   ],
-  view: new View({
-    center: [0,0],
-    zoom: 5
+  target: 'map',
+  view: new ol.View({
+    center: [0, 0],
+    zoom: 2
   })
 });
 
-map.addLayer(layer);
+var url = 'data/surf_coast_shire_network/surf_coast_shire_networkP.json';
+fetch(url).then(function(response) {
+  return response.json();
+}).then(function(json) {
+  var tileIndex = geojsonvt(json, {
+    extent: 4096,
+    debug: 2
+  });
+  var vectorSource = new ol.source.VectorTile({
+    format: new ol.format.GeoJSON(),
+    tileLoadFunction: function(tile) {
+      var format = tile.getFormat();
+      var tileCoord = tile.getTileCoord();
+      var data = tileIndex.getTile(tileCoord[0], tileCoord[1], -tileCoord[2] - 1);
 
-map.addInteraction(new DragAndDrop({
-  source: source,
-  formatConstructors: [GeoJSON, KML]
-}));
-
-map.addInteraction(new Select({
-  source: source
-}));
-
-
-// map.addInteraction(new Draw({
-//   type: 'Polygon',
-//   source: source
-// }));
-
-// map.addInteraction(new Snap({
-//   source: source
-// }));
-
-// map.addInteraction(new Modify({
-//   source: source
-// }));
-
-
-centerMap(map,144.967407,-37.820877); // on Melbourne
-
-sync(map); // for smooth update when moving it around in the browser
-
-
-function centerMap(theMap, long, lat) {
-    console.log("Long: " + long + " Lat: " + lat);
-    const coords = fromLonLat([long, lat]);
-    theMap.getView().animate({center: coords, zoom: 6});
-}
+      var features = format.readFeatures(
+          JSON.stringify({
+            type: 'FeatureCollection',
+            features: data ? data.features : []
+          }, replacer));
+      tile.setLoader(function() {
+        tile.setFeatures(features);
+        tile.setProjection(tilePixels);
+      });
+    },
+    url: 'data:' // arbitrary url, we don't use it in the tileLoadFunction
+  });
+  var vectorLayer = new ol.layer.VectorTile({
+    source: vectorSource
+  });
+  map.addLayer(vectorLayer);
+});

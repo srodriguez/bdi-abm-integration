@@ -10,7 +10,7 @@ import argparse
 # Globals and Defaults
 #----------------------------------------------------------------------------
 OGR2OGR = 'ogr2ogr'
-   
+
 #----------------------------------------------------------------------------
 # Check if a rogram is installed
 #----------------------------------------------------------------------------
@@ -40,7 +40,7 @@ def which(program):
 if which(OGR2OGR) == None :
    print '\n',OGR2OGR,' is either not installed or not accessible; aborting.\n'
    sys.exit(1)
-   
+
 # Parse input arguments
 def valid_file(arg):
     if not os.path.exists(arg):
@@ -59,6 +59,14 @@ parser.add_argument('-outfile',
                     help='path to the output json file (default is /vsistdout)',
                     required=False,
                     default='/vsistdout')
+parser.add_argument('-inCRS',
+                    help='input CRS e.g., "EPSG:4326"',
+                    required=False,
+                    default='')
+parser.add_argument('-outCRS',
+                    help='output CRS to project to e.g., "EPSG:4326" (default is to keep the original CRS)',
+                    required=False,
+                    default='')
 args = parser.parse_args()
 
 # process shape files and generate ouput json
@@ -70,8 +78,12 @@ gzfile = args.outfile + '.gz'
 #   os.remove(args.outfile)
 #except OSError:
 #   pass
-subprocess.call([OGR2OGR, '-f', 'GeoJSON', args.outfile, args.infile])
+if args.outCRS == '' or args.inCRS == '' :
+    subargs=[OGR2OGR, '-f', 'GeoJSON', args.outfile, args.infile]
+else:
+    subargs=[OGR2OGR, '-s_srs', args.inCRS, '-t_srs', args.outCRS, '-f', 'GeoJSON', args.outfile, args.infile]
+print(subargs)
+subprocess.call(subargs)
 #with open(args.outfile, 'rb') as f_in, gzip.open(gzfile, 'wb') as f_out:
 #   shutil.copyfileobj(f_in, f_out)
 #   os.remove(args.outfile)
-
