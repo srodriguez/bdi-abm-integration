@@ -12,6 +12,8 @@ import VectorTile from 'ol/source/vectortile';
 import geojsonvt from 'geojson-vt/geojson-vt-dev';
 
 import DragAndDrop from 'ol/interaction/draganddrop';
+import Select from 'ol/interaction/select';
+import Overlay from 'ol/overlay';
 
 var replacer = function(key, value) {
   if (value.geometry) {
@@ -101,4 +103,36 @@ fetch(url).then(function(response) {
     source: vectorSource
   });
   map.addLayer(vectorLayer);
+
+
+
+  // const overlay = new Overlay({
+  //   element: document.getElementById('popup-container'),
+  //   positioning: 'bottom-center',
+  //   offset: [0, -10],
+  //   autoPan: true
+  // });
+  //map.addOverlay(overlay); <-- gives an error
+  // overlay.getElement().addEventListener('click', function() {
+  //   overlay.setPosition();
+  // });
+
+  map.on('click', function(e) {
+    let markup = '';
+    map.forEachFeatureAtPixel(e.pixel, function(feature) {
+      markup += `${markup && '<hr>'}<table>`;
+      const properties = feature.getProperties();
+      for (const property in properties) {
+        markup += `<tr><th>${property}</th><td>${properties[property]}</td></tr>`;
+      }
+      markup += '</table>';
+    }, {hitTolerance: 1});
+    if (markup) {
+      document.getElementById('popup-content').innerHTML = markup;
+      //overlay.setPosition(e.coordinate);
+      console.log(markup)
+    } else {
+      //overlay.setPosition();
+    }
+  });
 });
