@@ -12,8 +12,9 @@ import VectorTile from 'ol/source/vectortile';
 import geojsonvt from 'geojson-vt/geojson-vt-dev';
 
 import DragAndDrop from 'ol/interaction/draganddrop';
-import Select from 'ol/interaction/select';
 import Overlay from 'ol/overlay';
+import {Style, Fill, Stroke, Circle, Text} from 'ol/style';
+import Select from 'ol/interaction/select';
 
 var replacer = function(key, value) {
   if (value.geometry) {
@@ -100,11 +101,27 @@ fetch(url).then(function(response) {
     url: 'data:' // arbitrary url, we don't use it in the tileLoadFunction
   });
   var vectorLayer = new ol.layer.VectorTile({
-    source: vectorSource
+    source: vectorSource,
+    style: function(feature, resolution){
+      var w = feature.getProperties()["capacity"]/900;
+      var styles = {
+        'Polygon': [new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: 'rgba(102, 153, 255, 0.7)',
+                width: w
+            })
+        })],
+        'LineString': [new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: 'rgba(102, 153, 255, 0.7)',
+                width: w
+            })
+        })]
+      };
+        return styles[feature.getGeometry().getType()];
+    }
   });
   map.addLayer(vectorLayer);
-
-
 
   // const overlay = new Overlay({
   //   element: document.getElementById('popup-container'),
@@ -135,4 +152,27 @@ fetch(url).then(function(response) {
       //overlay.setPosition();
     }
   });
+
+  var select = new ol.interaction.Select({
+      layers: [vectorLayer],
+      style: function(feature, resolution){
+        var w = feature.getProperties()["capacity"]/900;
+        var styles = {
+          'Polygon': [new ol.style.Style({
+              stroke: new ol.style.Stroke({
+                  color: 'rgba(255, 102, 0, 0.7)',
+                  width: w
+              })
+          })],
+          'LineString': [new ol.style.Style({
+              stroke: new ol.style.Stroke({
+                  color: 'rgba(255, 102, 0, 0.7)',
+                  width: w
+              })
+          })]
+        };
+        return styles[feature.getGeometry().getType()];
+      }
+    });
+    map.addInteraction(select);
 });
