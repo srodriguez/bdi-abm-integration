@@ -143,7 +143,7 @@ fetch(url).then(function(response) {
         markup += `<tr><th>${property}</th><td>${properties[property]}</td></tr>`;
       }
       markup += '</table>';
-    }, {hitTolerance: 1});
+    }, {hitTolerance: 10});
     if (markup) {
       document.getElementById('popup-content').innerHTML = markup;
       //overlay.setPosition(e.coordinate);
@@ -156,17 +156,17 @@ fetch(url).then(function(response) {
   var select = new ol.interaction.Select({
       layers: [vectorLayer],
       style: function(feature, resolution){
-        var w = feature.getProperties()["capacity"]/900;
+        var w = 2+feature.getProperties()["capacity"]/600;
         var styles = {
           'Polygon': [new ol.style.Style({
               stroke: new ol.style.Stroke({
-                  color: 'rgba(255, 102, 0, 0.7)',
+                  color: 'rgba(255, 102, 0, 0.9)',
                   width: w
               })
           })],
           'LineString': [new ol.style.Style({
               stroke: new ol.style.Stroke({
-                  color: 'rgba(255, 102, 0, 0.7)',
+                  color: 'rgba(255, 102, 0, 0.9)',
                   width: w
               })
           })]
