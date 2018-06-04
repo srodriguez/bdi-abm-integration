@@ -103,7 +103,7 @@ fetch(url).then(function(response) {
   var vectorLayer = new ol.layer.VectorTile({
     source: vectorSource,
     style: function(feature, resolution){
-      var w = feature.getProperties()["capacity"]/900;
+      var w = 1+feature.getProperties()["capacity"]/1000;
       var styles = {
         'Polygon': [new ol.style.Style({
             stroke: new ol.style.Stroke({
@@ -156,7 +156,7 @@ fetch(url).then(function(response) {
   var select = new ol.interaction.Select({
       layers: [vectorLayer],
       style: function(feature, resolution){
-        var w = 2+feature.getProperties()["capacity"]/600;
+        var w = 1+feature.getProperties()["capacity"]/1000;
         var styles = {
           'Polygon': [new ol.style.Style({
               stroke: new ol.style.Stroke({
