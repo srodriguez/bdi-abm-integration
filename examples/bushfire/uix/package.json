@@ -5,11 +5,8 @@
   "private": true,
   "main": "main.js",
   "dependencies": {
-    "colormap": "^2.3.0",
     "geojson-vt": "^3.1.2",
-    "ol": "^4.6.5",
-    "ol-hashed": "^1.0.2",
-    "ol-mapbox-style": "^3.0.0-beta.7"
+    "ol": "^4.6.5"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^4.5.1",

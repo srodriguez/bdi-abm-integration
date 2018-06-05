@@ -1,5 +1,5 @@
 import 'ol/ol.css';
-/*
+
 import Projection from 'ol/proj/projection';
 import View from 'ol/view';
 import Map from 'ol/map';
@@ -8,12 +8,14 @@ import OSM from 'ol/source/osm';
 import GeoJSON from 'ol/format/geojson';
 import Vector from 'ol/layer/vector';
 import VectorTile from 'ol/source/vectortile';
-*/
+import VectorTileLayer from 'ol/layer/vectortile';
+
 import geojsonvt from 'geojson-vt/geojson-vt-dev';
 
 import DragAndDrop from 'ol/interaction/draganddrop';
 import Overlay from 'ol/overlay';
-import {Style, Fill, Stroke, Circle, Text} from 'ol/style';
+import Style from 'ol/style/style';
+import Stroke from 'ol/style/stroke';
 import Select from 'ol/interaction/select';
 
 var replacer = function(key, value) {
@@ -55,23 +57,24 @@ var replacer = function(key, value) {
   }
 };
 
-var tilePixels = new ol.proj.Projection({
+var tilePixels = new Projection({
   code: 'TILE_PIXELS',
   units: 'tile-pixels'
 });
 
-var map = new ol.Map({
+var map = new Map({
   layers: [
-    new ol.layer.Tile({
-      source: new ol.source.OSM()
+    new Tile({
+      source: new OSM()
     })
   ],
   target: 'map',
-  view: new ol.View({
+  view: new View({
     center: [0, 0],
     zoom: 2
   })
 });
+
 
 var url = 'data/surf_coast_shire_network/surf_coast_shire_networkP.json';
 fetch(url).then(function(response) {
@@ -81,8 +84,8 @@ fetch(url).then(function(response) {
     extent: 4096,
     debug: 2
   });
-  var vectorSource = new ol.source.VectorTile({
-    format: new ol.format.GeoJSON(),
+  var vectorSource = new VectorTile({
+    format: new GeoJSON(),
     tileLoadFunction: function(tile) {
       var format = tile.getFormat();
       var tileCoord = tile.getTileCoord();
@@ -100,19 +103,19 @@ fetch(url).then(function(response) {
     },
     url: 'data:' // arbitrary url, we don't use it in the tileLoadFunction
   });
-  var vectorLayer = new ol.layer.VectorTile({
+  var vectorLayer = new VectorTileLayer({
     source: vectorSource,
     style: function(feature, resolution){
       var w = 1+feature.getProperties()["capacity"]/1000;
       var styles = {
-        'Polygon': [new ol.style.Style({
-            stroke: new ol.style.Stroke({
+        'Polygon': [new Style({
+            stroke: new Stroke({
                 color: 'rgba(102, 153, 255, 0.7)',
                 width: w
             })
         })],
-        'LineString': [new ol.style.Style({
-            stroke: new ol.style.Stroke({
+        'LineString': [new Style({
+            stroke: new Stroke({
                 color: 'rgba(102, 153, 255, 0.7)',
                 width: w
             })
@@ -123,16 +126,18 @@ fetch(url).then(function(response) {
   });
   map.addLayer(vectorLayer);
 
-  // const overlay = new Overlay({
-  //   element: document.getElementById('popup-container'),
-  //   positioning: 'bottom-center',
-  //   offset: [0, -10],
-  //   autoPan: true
-  // });
-  //map.addOverlay(overlay); <-- gives an error
-  // overlay.getElement().addEventListener('click', function() {
-  //   overlay.setPosition();
-  // });
+
+  const overlay = new Overlay({
+    element: document.getElementById('popup-container'),
+    positioning: 'bottom-center',
+    offset: [0, -10],
+    autoPan: true
+  });
+  overlay.getElement().addEventListener('click', function() {
+    overlay.setPosition();
+  });
+  map.addOverlay(overlay);
+
 
   map.on('click', function(e) {
     let markup = '';
@@ -146,26 +151,26 @@ fetch(url).then(function(response) {
     }, {hitTolerance: 10});
     if (markup) {
       document.getElementById('popup-content').innerHTML = markup;
-      //overlay.setPosition(e.coordinate);
+      overlay.setPosition(e.coordinate);
       console.log(markup)
     } else {
-      //overlay.setPosition();
+      overlay.setPosition();
     }
   });
 
-  var select = new ol.interaction.Select({
+  var select = new Select({
       layers: [vectorLayer],
       style: function(feature, resolution){
         var w = 1+feature.getProperties()["capacity"]/1000;
         var styles = {
-          'Polygon': [new ol.style.Style({
-              stroke: new ol.style.Stroke({
+          'Polygon': [new Style({
+              stroke: new Stroke({
                   color: 'rgba(255, 102, 0, 0.9)',
                   width: w
               })
           })],
-          'LineString': [new ol.style.Style({
-              stroke: new ol.style.Stroke({
+          'LineString': [new Style({
+              stroke: new Stroke({
                   color: 'rgba(255, 102, 0, 0.9)',
                   width: w
               })
