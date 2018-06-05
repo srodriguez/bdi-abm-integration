@@ -20,6 +20,7 @@ import Select from 'ol/interaction/select';
 
 import ScaleLine from 'ol/control/scaleline';
 import Proj from 'ol/proj';
+import Interaction from 'ol/interaction'
 
 const coordsFederationSquareMelbourne = Proj.fromLonLat([144.968555, -37.817948]);
 
@@ -77,7 +78,8 @@ var map = new Map({
   view: new View({
     center: coordsFederationSquareMelbourne,
     zoom: 7
-  })
+  }),
+  interactions : Interaction.defaults({doubleClickZoom :false}),
 });
 
 
@@ -144,8 +146,11 @@ fetch(url).then(function(response) {
   });
   map.addOverlay(overlay);
 
-
   map.on('click', function(e) {
+    overlay.setPosition();
+  });
+
+  map.on('dblclick', function(e) {
     let markup = '';
     map.forEachFeatureAtPixel(e.pixel, function(feature) {
       markup += `${markup && '<hr>'}<table>`;
@@ -166,6 +171,13 @@ fetch(url).then(function(response) {
 
   var select = new Select({
       layers: [vectorLayer],
+      condition: function(evt) {
+        if (evt.type == "click" || evt.type == "dblclick") {
+          console.log(evt);
+          return true;
+        }
+        return false;
+      },
       style: function(feature, resolution){
         var w = 1+feature.getProperties()["capacity"]/1000;
         var styles = {
