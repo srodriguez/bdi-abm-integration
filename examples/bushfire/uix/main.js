@@ -18,6 +18,11 @@ import Style from 'ol/style/style';
 import Stroke from 'ol/style/stroke';
 import Select from 'ol/interaction/select';
 
+import ScaleLine from 'ol/control/scaleline';
+import Proj from 'ol/proj';
+
+const coordsFederationSquareMelbourne = Proj.fromLonLat([144.968555, -37.817948]);
+
 var replacer = function(key, value) {
   if (value.geometry) {
     var type;
@@ -70,13 +75,14 @@ var map = new Map({
   ],
   target: 'map',
   view: new View({
-    center: [0, 0],
-    zoom: 2
+    center: coordsFederationSquareMelbourne,
+    zoom: 7
   })
 });
 
 
-var url = 'data/surf_coast_shire_network/surf_coast_shire_networkP.json';
+// var url = 'data/surf_coast_shire_network/surf_coast_shire_networkP.json';
+var url = 'data/loddon_mallee_northern_cluster_shires_network/loddon_mallee_northern_cluster_shires_networkP.json';
 fetch(url).then(function(response) {
   return response.json();
 }).then(function(json) {
@@ -148,7 +154,7 @@ fetch(url).then(function(response) {
         markup += `<tr><th>${property}</th><td>${properties[property]}</td></tr>`;
       }
       markup += '</table>';
-    }, {hitTolerance: 10});
+    }, {hitTolerance: 3});
     if (markup) {
       document.getElementById('popup-content').innerHTML = markup;
       overlay.setPosition(e.coordinate);
@@ -180,4 +186,10 @@ fetch(url).then(function(response) {
       }
     });
     map.addInteraction(select);
+
+    var controlScale = new ScaleLine({
+      units: 'metric',
+    });
+    map.addControl(controlScale);
+
 });
