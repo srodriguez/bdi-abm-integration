@@ -12,6 +12,15 @@ function toJson() {
   echo $cmd; eval $cmd
 
 }
+
+# Northern Cluster Shires network JSON
+name=loddon_mallee_northern_cluster_shires_network
+projection="EPSG:28355"
+mkdir -p $dir/$name
+cmd="$matsim2esri -net $dir/../../scenarios/loddon-mallee-northern-cluster-shires/loddon_mallee_northern_cluster_shires_network.xml.gz -outl $dir/$name/${name}L.shp -outp $dir/$name/${name}P.shp -crs 'EPSG:4326'"
+echo $cmd; eval $cmd
+toJson $name $projection
+
 # Mount Alexander Shire network JSON
 name=mount_alexander_shire_network
 projection="EPSG:28355"
