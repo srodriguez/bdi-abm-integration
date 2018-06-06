@@ -35,6 +35,10 @@
   color: white;
 }
 
+#popup-container {
+  width: 300px;
+}
+
 #popup-content {
   max-height: 200px;
   overflow: auto;

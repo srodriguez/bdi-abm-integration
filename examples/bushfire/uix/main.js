@@ -115,16 +115,16 @@ fetch(url).then(function(response) {
     source: vectorSource,
     style: function(feature, resolution){
       var w = 1+feature.getProperties()["capacity"]/1000;
+      var freespeed = feature.getProperties()["freespeed"];
+      var cr = 180, cg = 255, cb = 220;
+      cg = Number(cg*(1-(freespeed/40))).toFixed(0); if (cg < 0) {cg = 0};
+      cr = Number(cr*(1-(freespeed/35))).toFixed(0); if (cr < 0) {cr = 0};
+      console.log("["+cr+","+cg+","+cb+"]")
       var styles = {
         'Polygon': [new Style({
             stroke: new Stroke({
-                color: 'rgba(102, 153, 255, 0.7)',
-                width: w
-            })
-        })],
-        'LineString': [new Style({
-            stroke: new Stroke({
-                color: 'rgba(102, 153, 255, 0.7)',
+                //color: 'rgba(102, 153, 255, 0.7)',
+                color: 'rgba('+cr+','+cg+','+cb+', 0.85)',
                 width: w
             })
         })]
@@ -152,14 +152,27 @@ fetch(url).then(function(response) {
 
   map.on('dblclick', function(e) {
     let markup = '';
-    map.forEachFeatureAtPixel(e.pixel, function(feature) {
+    var markupMATSimFeature = function(feature) {
       markup += `${markup && '<hr>'}<table>`;
       const properties = feature.getProperties();
       for (const property in properties) {
-        markup += `<tr><th>${property}</th><td>${properties[property]}</td></tr>`;
+        var val = "";
+        if (property == "length") {
+          val = Number(properties[property]/1000).toFixed(1) + ` km`; // from mtrs to km
+        } else if (property == "freespeed") {
+          val = Number(properties[property]*3.6).toFixed(0) + ` km/h`; // from m/s to km/h
+        } else if (property == "capacity") {
+          val = properties[property] + ` veh/hr`;
+        } else if (property == "lanes" || property == "ID") {
+          val = properties[property];
+        }
+        if (val != "") {
+          markup += `<tr><th>${property}</th><td>${val}</td></tr>`;
+        }
       }
       markup += '</table>';
-    }, {hitTolerance: 3});
+    }
+    map.forEachFeatureAtPixel(e.pixel, markupMATSimFeature, {hitTolerance: 1});
     if (markup) {
       document.getElementById('popup-content').innerHTML = markup;
       overlay.setPosition(e.coordinate);
@@ -173,7 +186,6 @@ fetch(url).then(function(response) {
       layers: [vectorLayer],
       condition: function(evt) {
         if (evt.type == "click" || evt.type == "dblclick") {
-          console.log(evt);
           return true;
         }
         return false;
@@ -182,12 +194,6 @@ fetch(url).then(function(response) {
         var w = 1+feature.getProperties()["capacity"]/1000;
         var styles = {
           'Polygon': [new Style({
-              stroke: new Stroke({
-                  color: 'rgba(255, 102, 0, 0.9)',
-                  width: w
-              })
-          })],
-          'LineString': [new Style({
               stroke: new Stroke({
                   color: 'rgba(255, 102, 0, 0.9)',
                   width: w
