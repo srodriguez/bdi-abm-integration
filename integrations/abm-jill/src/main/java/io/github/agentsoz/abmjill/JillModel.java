@@ -4,7 +4,7 @@ package io.github.agentsoz.abmjill;
  * #%L
  * BDI-ABM Integration Package
  * %%
- * Copyright (C) 2014 - 2020 by its authors. See AUTHORS file.
+ * Copyright (C) 2014 - 2021 by its authors. See AUTHORS file.
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -127,9 +127,9 @@ public class JillModel implements BDIServerInterface, ModelInterface, Environmen
 	@Override
 	public AgentDataContainer takeControl(double time, AgentDataContainer inAdc) {
 		// Sending TIME percept always to every agent is too costly, dhi 20/jun/19
-		//for(int i = 0; i < GlobalState.agents.size(); i++) {
-		//	getAgent(i).handlePercept(PerceptList.TIME, time);
-		//}
+		for(int i = 0; i < GlobalState.agents.size(); i++) {
+			getAgent(i).handlePercept(PerceptList.TIME, time);
+		}
 		if (inAdc != null) {
 			Iterator<String> it = inAdc.getAgentIdIterator();
 			while (it.hasNext()) {
